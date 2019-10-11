@@ -1,7 +1,10 @@
 
 # Innopro_Web-Crawler 
 
+成品網址：https://innopro.herokuapp.com/session/
+
 Selenium :臉書團購網站留言、貼文、社團成員爬蟲
+
 Django:後端網路架構
 
 ## 專案初始設定：
