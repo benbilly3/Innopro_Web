@@ -15,7 +15,10 @@ import json
 from Innopro.config import facebook_account, facebook_password
 from util import loginToFacebook, initBrowser, getPostLinks, getPostOrderData
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> c0d3eb78c7009d5d66775f18c056eb557a20eb00
 def likeCrawler(url):
 
     browser = initBrowser()
