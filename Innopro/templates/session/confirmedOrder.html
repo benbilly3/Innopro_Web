@@ -1,0 +1,456 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container text-center">
+
+    {% if message %}
+
+    <h4>{{ message }}</h4>
+
+    {% else %}
+
+    <h3>{{ session.year }}-{{ session.month }} {{ session.group }}志同道合團匯款公告</h3>
+    <h5 id="userName" fbuid="{{ member.fbid }}">訂購人：{{ member.name }}</h5>
+    
+    {% if checkout %}
+    <h3>訂單編號：{{ checkout.checkout_id }}</h3>
+    {% endif %}
+    
+    <br>
+    <table id="table-items">
+        <tr>
+            <th>團購批號</th>
+            <th>商品編號</th>
+            <th>商品名稱</th>
+            <th>數量</th>
+            <th>商品單價</th>
+            <th>商品總價</th>
+            <th>備註</th>
+        </tr>
+
+        {% for order in orders %}
+        <tr>
+            <td>{{ session.session_id }}</td>
+            <td>{{ order.product.wine_id }}</td>
+            <td style="text-align: left">{{ order.product.name }}</td>
+            <td>{{ order.confirm_amount|default_if_none:0 }}</td><!-- 扣除贈送量後計價數 -->
+            <td>{{ order.product.price }}</td>
+            <td>{{ order.orderTotalPrice }}</td>
+            <td>{{ order.notes|default_if_none:"" }}</td>
+        </tr>
+
+        {% endfor %}
+        <tr>
+            <!-- <td>團購批號</td>
+            <td>訂單編號</td> -->
+            <td colspan="3">小計</td>
+            <td colspan="4">{{ checkout.orderSum|default:0 }}</td>
+            <!-- <td>金額達標免運優惠</td>
+            <td>瓶數達標免運優惠</td>
+            <td>全團折扣</td> -->
+
+        </tr>
+        <tr>
+            <!-- <td>{{ final.session }}</td>
+            <td>{{ final.訂單編號 }}</td> -->
+            <!-- <td>{{ final.金額達標免運優惠 }}</td>
+            <td>{{ final.瓶數達標免運優惠 }}</td>
+            <td>{{ final.全團折扣優惠 }}</td> -->
+        </tr>
+        <!-- <tr>
+            <td colspan="5" style="text-align: left">折扣前價格</td>
+            <td colspan="3">{{ final.折扣前價格 }}</td>
+        </tr> -->
+        <tr>
+            <td colspan="3" style="text-align: left">自取付款金額</td>
+            <td colspan="4">{{ checkout.price_after_disc|default:0 }}</td>
+        </tr>
+        <tr>
+            <td colspan="3" style="text-align: left">運費</td>
+            <td colspan="4">{{ checkout.ship_fee|default:0 }}</td>
+        </tr>
+        <tr>
+            <td colspan="3" style="text-align: left">宅配付款金額</td>
+            <td colspan="4">{{ checkout.total_price|default:0 }}</td>
+        </tr>
+
+    </table>
+
+    {% if checkout %}
+    <br>
+    <h4>用戶基本資料</h4>
+    <table id="member_info" class="text-left">
+
+        <tr>
+            <th colspan="2" style="text-align: center" class="user_info_title">匯款與取貨資訊填寫</th>
+        </tr>
+        <tr>
+            <th class="user_info_title">訂購人</th>
+            <td>
+                {{ member.name }}
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title">匯款資訊</th>
+            <td>
+                匯款銀行：{{ member.helper.bank_account_branch }} <br>
+                帳號：{{ member.helper.bank_account_no }} <br>
+                戶名： {{ member.helper.bank_account_title }}
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text> 匯款金額</th>
+            <td>
+                <input id="input_transfer_amount" type="number"
+                    value="{{ checkout.transfer_amount|default_if_none:'' }}">
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>匯款帳戶末五碼<br>
+                (請填寫存褶或卡片背面後5碼/無褶存入填寫匯款人姓名)</th>
+            <td>
+                <input id="input_transfer_account" type="value"
+                    value="{{ checkout.transfer_account|default_if_none:'' }}">
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>email(請留常用信箱)</th>
+            <td>
+                <input id="input_email" type="email" size="30" value="{{ member.email|default_if_none:'' }}"></td>
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>手機</th>
+            <td>
+                <input id="input_phone" type="value" size="30" value="{{ member.phone|default_if_none:'' }}"></td>
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>取貨方式</th>
+            <td>
+                <label for="self-take-tp"><input type="radio" name="deliver-way" id="self-take-tp"
+                        {% if checkout.ship_method == "tp" %} checked {%endif%} value="tp">
+                    內湖自取（台北市內湖區瑞光路413號9樓之一）</label><br>
+                <label for="self-take-tc"><input type="radio" name="deliver-way" id="self-take-tc"
+                        {% if checkout.ship_method == "tc" %} checked {%endif%} value="tc">
+                    台中自取（台中市西屯區市政路668號（近黎明路與市政路口））</label><br>
+                <label for="self-take-false"><input type="radio" name="deliver-way" id="self-take-false" value="ship"
+                        {% if checkout.ship_method == "ship" %} checked {%endif%}>
+                    冷藏宅配(單購一般品項採常溫配送/或合併運送詳公告或參考冷藏宅配收費表)</label>
+            </td>
+        </tr>
+        <tr>
+            <th colspan="2" style="text-align: center" class="user_info_title"><text
+                    class="red-text">*</text>宅配資訊填寫(自取者也須填宅配地址)</th>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>縣市</th>
+            <td>
+                <input id="input_city" type="value" size="30" value="{{ member.city|default_if_none:'' }}">
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>地區(區鄉鎮市)</th>
+            <td>
+                <input id="input_county" type="value" size="30" value="{{ member.county|default_if_none:'' }}">
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>郵遞區號</th>
+            <td>
+                <input id="input_zipcode" type="value" size="30" value="{{ member.zipcode|default_if_none:'' }}">
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>地址</th>
+            <td>
+                <input id="input_address" type="text" size="50" value="{{ member.address|default_if_none:'' }}">
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>收件人(請填寫中文全名)</th>
+            <td>
+                <input id="input_name" type="text" size="30" value="{{ member.shipname|default_if_none:'' }}"></td>
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>配送時段</th>
+            <td>
+                <label for="deliver-morning"><input type="radio" name="deliver-time" id="deliver-morning"
+                        {% if checkout.ship_time == "morning" %} checked {%endif%}
+                        value="morning">13時前</label><br>
+                <label for="deliver-noon"><input type="radio" name="deliver-time" id="deliver-noon"
+                        {% if checkout.ship_time == "noon" %} checked {%endif%} value="noon">
+                    14時-18時</label><br>
+                <label for="deliver-all"><input type="radio" name="deliver-time" id="deliver-all" value="all"
+                        {% if checkout.ship_time == "all" %} checked {%endif%}>不指定</label>
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title">指定配送日: <br>
+                (無法指定“週日”/ 指定日期必需晚於填單後10天)</th>
+            <td>
+                <input id="input_deliver_date" type="text" size="30"
+                    value="{{ checkout.ship_date|default_if_none:'' }}"></td>
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title">發票抬頭(需開立三聯式發票請填寫此欄/並務必填寫完整公司抬頭)</th>
+            <td>
+                <input id="input_invoice_title" type="text" size="30" required
+                    value="{{ member.invoice_title|default_if_none:'' }}"></td>
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title">統一編號(需開立三聯式發票請填寫此欄/請務必確認統編是否正確)</th>
+            <td>
+                <input id="input_invoice_id" type="text" size="30" value="{{ member.invoice_id|default_if_none:'' }}">
+            </td>
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title">備註</th>
+            <td>
+                <input id="input_notes" type="text" value="{{ checkout.notes|default_if_none:'' }}">
+            </td>
+        </tr>
+
+        <tr>
+            <th class="user_info_title">小幫手</th>
+            <td> 有問題請聯絡你的小幫手：👉👉👉 <a href="{{ member.helper.user_profile_url }}"
+                    target="_blank">{{ member.helper }}</a>
+            </td>
+        </tr>
+    </table>
+    <br>
+    註：標記 <text class="red-text">*</text> 為必填欄位，請在送出前確認填寫 🙏🙏🙏
+    <br><br>
+    <button id="submitChange" class="btn btn-primary" onclick="submitChange()">送出匯款資訊</button>
+    <br><br>
+    {% load static %}
+    <h4>運費規則</h4>
+    <img id="ship_rule" src="https://temporary0.s3-ap-southeast-1.amazonaws.com/INNOPRO/ship_rule.png" alt="">
+    {% endif %}  <!-- if checkout -->
+    {% endif %}
+</div>
+
+{% endblock content %}
+
+{% block styles %}
+<style>
+    #ship_rule {
+        width: 80vw;
+        height: auto;
+    }
+
+    #fb-search>input,
+    button {
+        font-size: 20px;
+    }
+
+    .red-text {
+        color: red
+    }
+
+    #table-items tr td {
+        text-align: center;
+    }
+
+    .announcement {
+        padding: 20px;
+        background-color: antiquewhite;
+    }
+
+    table {
+        width: 100%;
+        /* border: solid black 1px; */
+        border-collapse: collapse;
+    }
+
+    th,
+    td,
+    tr {
+        border: solid black 1px;
+        padding: 5px;
+        /* font-size: 18px; */
+    }
+
+    td>input {
+        font-size: 16px;
+        width: 90%;
+        height: 25px;
+    }
+
+    .user_info_title {
+        text-align: left;
+        width: 200px;
+    }
+
+    #submitChange {
+        font-size: 20px;
+        border-radius: 5px;
+    }
+
+    #warning,
+    .warning {
+        font-size: 12px;
+        color: red;
+    }
+
+    .notes_fb_format {
+        font-size: 16px;
+    }
+
+    .notes_fb_format>ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+
+    .notes_fb_format>ul>li {
+        background-color: #F9F2F4;
+        color: #008000;
+        margin-top: 10px;
+        width: fit-content;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let inputFBUrl = function () {
+        let fb_url = document.querySelector('#input_fb_url').value
+        let data = {
+            'fb_url': fb_url
+        }
+
+        $.ajax({
+            //提交數據的類型 POST GET
+            type: "POST",
+            //提交的網址
+            url: "/fbUrlToId/",
+            //提交的數據
+            data: data,
+            //返回數據的格式
+            datatype: "json",//"xml", "html", "script", "json", "jsonp", "text".
+            //在請求之前調用的函數
+            // beforeSend: function () { $("#msg").html("logining"); },
+            //成功返回之後調用的函數             
+            success: function (data) {
+                console.log(data)
+                if (data.fbuid) {
+                    console.log(data.fbuid)
+                    $('#warning').text('')
+                    window.location = data['fbuid']
+                } else {
+                    console.log('not an user')
+                    $('#warning').text('此帳號沒有近期的訂購記錄')
+                }
+
+            },
+            //調用執行後調用的函數
+            // complete: function (XMLHttpRequest, textStatus) {
+            //     alert(XMLHttpRequest.responseText);
+            //     alert(textStatus);
+            //HideLoading();
+            // },
+            //調用出錯執行的函數
+            error: function (e) {
+                console.log(e)
+                //請求出錯處理
+            }
+        });
+
+
+    }
+
+    let click = document.querySelector('#click')
+    try {
+        click.addEventListener('click', inputFBUrl)
+    } catch (error) {
+        console.log(error)
+    }
+
+    let submitChange = function () {
+        let confirm = window.confirm("確定必填欄位都有填寫正確資訊？")
+        if (confirm) {
+            let email = $('#input_email').val() !== '' ? $('#input_email').val() : null
+            let phone = $('#input_phone').val() !== '' ? $('#input_phone').val() : null
+            let city = $('#input_city').val() !== '' ? $('#input_city').val() : null
+            let county = $('#input_county').val() !== '' ? $('#input_county').val() : null
+            let zipcode = $('#input_zipcode').val() !== '' ? $('#input_zipcode').val() : null
+            let address = $('#input_address').val() !== '' ? $('#input_address').val() : null
+            let name = $('#input_name').val() !== '' ? $('#input_name').val() : null
+            let invoice_id = $('#input_invoice_id').val() !== '' ? $('#input_invoice_id').val() : null
+            let invoice_title = $('#input_invoice_title').val() !== '' ? $('#input_invoice_title').val() : null
+            let ship_method = $("input[type='radio'][name='deliver-way']:checked").val();
+            let deliver_time = $("input[type='radio'][name='deliver-time']:checked").val() === undefined ? 'all' : $("input[type='radio'][name='deliver-time']:checked").val();
+            let deliver_date = $('#input_deliver_date').val() !== '' ? $('#input_deliver_date').val() : null
+            let transfer_amount = $('#input_transfer_amount').val() !== '' ? $('#input_transfer_amount').val() : null
+            let transfer_account = $('#input_transfer_account').val() !== '' ? $('#input_transfer_account').val() : null
+            let notes = $('#input_notes').val() !== '' ? $('#input_notes').val() : null
+            let data = {
+                'user_fb_id': $('#userName')[0].getAttribute('fbuid'),
+
+                'email': email,
+                'phone': phone,
+                'city': city,
+                'county': county,
+                'address': address,
+                'zipcode': zipcode,
+                'name': name,
+                'invoice_id': invoice_id,
+                'invoice_title': invoice_title,
+                'ship_method': ship_method,
+                'ship_time': deliver_time,
+                'ship_date': deliver_date,
+                'transfer_amount': transfer_amount,
+                'transfer_account': transfer_account,
+                'notes': notes
+            }
+            console.log(data)
+
+            $.ajax(
+                {
+                    //提交數據的類型 POST GET
+                    type: "POST",
+                    //提交的網址
+                    url: "",
+                    //提交的數據
+                    data: data,
+                    //返回數據的格式
+                    datatype: "json",
+                    //成功返回之後調用的函數             
+                    success: function (data) {
+                        
+                        if (data.status === 'success') {
+                            console.log(data)
+                            window.alert('資料上傳成功')
+                            location.reload()
+                        } else {
+                            window.alert('系統錯誤，請稍後再試')
+                        }
+                    },
+                    //調用執行後調用的函數
+                    // complete: function (XMLHttpRequest, textStatus) {
+                    //     alert(XMLHttpRequest.responseText);
+                    //     alert(textStatus);
+                    //HideLoading();
+                    // },
+                    //調用出錯執行的函數
+                    error: function (e) {
+                        console.log(e)
+                        //請求出錯處理
+                    }
+                }
+            );
+
+        } else {
+        }
+    }
+
+
+
+</script>
+{% endblock %}

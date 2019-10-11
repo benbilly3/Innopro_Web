@@ -1,0 +1,98 @@
+<!-- 定義導航欄 -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+
+        <!-- 導航欄商標 -->
+        <a class="navbar-brand" href="/">創潮酒坊</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- 導航入口 -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_superuser %}
+                <!-- 條目 -->
+        <!-- .dropdown Navbar選項使用下拉式選單 -->
+                <!--結算前資訊-->
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">結算前資訊</a>
+                  <!-- .dropdown-menu 下拉選單內容 -->
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="/sales">銷售列表</a>
+                    <a class="dropdown-item" href="/salesStatistics">銷售統計列表</a>
+                  </div>
+                </li>
+
+                <!--結算後資訊-->
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">結算後資訊</a>
+                  <!-- .dropdown-menu 下拉選單內容 -->
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="/afterFeeList">購買權確認清單</a>
+                    <a class="dropdown-item" href="/bigtable">結算後大表單</a>
+                    <a class="dropdown-item" href="/memberTransfer">匯款資訊</a>
+                    <a class="dropdown-item" href="/invoice">發票開立</a>
+                    <a class="dropdown-item" href="/shipment">出貨列表</a>
+                  </div>
+                </li>
+
+                <!--會員管理-->
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">會員管理</a>
+                  <!-- .dropdown-menu 下拉選單內容 -->
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="/members">會員列表</a>
+                  </div>
+                </li>
+
+                <!--用戶介面-->
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">用戶介面</a>
+                  <!-- .dropdown-menu 下拉選單內容 -->
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="/session">團購記錄</a>
+                    <!-- <a class="dropdown-item" href="/hotReport">團購品項資訊</a> -->
+                    <a class="dropdown-item" href="https://www.facebook.com/innoprowine/">創潮官方粉絲團</a>
+                    <a class="dropdown-item" href="https://www.facebook.com/groups/1026948964034655/?fref=ts">志同道合型錄</a>
+                  </div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin">系統後台</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">登出</a>
+                </li>
+
+
+                {% elif user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/session">團購記錄</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/hotReport">團購統計資訊</a>
+                </li>
+                <!-- 條目 -->
+                <li class="nav-item">
+                    <a class="nav-link" href="https://www.facebook.com/innoprowine/">創潮官方粉絲團</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://www.facebook.com/groups/1026948964034655/?fref=ts">志同道合型錄</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">登出</a>
+                </li>
+                {% else %}
+                <!-- 條目 -->
+                <li class="nav-item">
+                    <a class="nav-link" href="https://www.facebook.com/innoprowine/">創潮官方粉絲團</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://www.facebook.com/groups/1026948964034655/?fref=ts">志同道合型錄</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

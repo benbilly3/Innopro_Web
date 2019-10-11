@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<body class="text-center bgc1" cz-shortcut-listen="true">
+    <div class="container text-left tc1">
+        <br>
+        <h3 class="display-5 ">登入您的 Facebook 授權本App檢視您的記錄</h3>
+<!--        <div class="fb-login-button" data-width="500" data-size="large" data-button-type="login_with" data-auto-logout-link="false" data-use-continue-as="false"></div>-->
+        <fb:login-button scope="public_profile,email" autologoutlink="true" onlogin="checkLoginState();"  data-size="large" data-width="500" >
+        </fb:login-button>
+        <br>
+        <br>
+        <div class="to-session hide">
+            <button type="button" class="btn btn-light btn-to-session" onclick="window.location.href = '/session'">查詢我的團購資料</button>
+        </div>
+        <!-- <small class="form-text tc1">（登入後請靜候 3-5 秒回傳認證結果，認證成功將會自動轉跳至訂單頁面）</small> -->
+        <br>
+        <text class="hide">目前狀態：</text><span id="FB_STATUS_1" class="hide"></span>
+        <br>
+        <!-- <a href="fb://myfacepage/">link</a> -->
+        <br>
+        <!-- Notice: 第一次授權 App 需要填入 fburl -->
+        <div id="signup" class="hide">
+            <h4>因為 FB 政策改變，需要重新填入一次 fb 連結</h4>
+            <form action="" class="" onkeydown="return event.key != 'Enter';">
+                <div class="form-group">
+                    <label for="inputFbUrl">請輸入您的 facebook 連結</label>
+                    <input type="url" class="form-control" id="inputFbUrl" aria-describedby="inputFbUrlHelp"
+                        placeholder="請輸入 fb 連結">
+                    <small id="inputFbUrlWarning" class="form-text hide"></small>
+                    <small id="inputFbUrlHelp" class="form-text text-muted">（只需提供一次，往後無需再次提供）</small>
+                    <br>
+                    <button id="submitFburl" type="button" class="btn btn-primary btn-sm">送出</button>
+                </div>
+            </form>
+
+            <br>
+            <div class="notes_fb_format">
+                註：您的 FB 個人連結可能是以下的形式之一：
+                <ul>
+                    <li>https://www.facebook.com/JohnDoe</li>
+                    <li>https://m.facebook.com/sally.struthers</li>
+                    <li>https://www.facebook.com/profile.php?id=24353623</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="rotateImage">
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+      <ol class="carousel-indicators">
+        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="4"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="5"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="6"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="7"></li>
+
+      </ol>
+      <div id="carouselExampleFade" class="carousel slide carousel-fade" data-ride="carousel">
+        <div class="carousel-item active">
+         <img src="https://1.bp.blogspot.com/-MVSCHWm4kEs/XY4tkNWtMdI/AAAAAAAABHA/LDj6w5GmcGgB_h_DkHksrN3qgCK0UN9WgCLcBGAsYHQ/s320/%25E5%2589%25B5%25E6%25BD%25AEline.jpg" class="center-block w-25" alt="...">
+        </div>
+        <div class="carousel-item">
+          <img src="https://8.share.photo.xuite.net/winect/181e1bb/19224477/1190657310_m.jpg" class="center-block w-60" alt="...">
+        </div>
+        <div class="carousel-item">
+          <img src="https://8.share.photo.xuite.net/winect/181e17f/3407667/1187158092_m.jpg" class="center-block w-60" alt="...">
+        </div>
+         <div class="carousel-item">
+          <img src="https://8.share.photo.xuite.net/winect/181e18c/19224477/1190660079_m.jpg" class="center-block w-60" alt="...">
+        </div>
+          <div class="carousel-item">
+          <img src="https://8.share.photo.xuite.net/winect/181e13b/19224477/1190931870_m.jpg" class="center-block w-60" alt="...">
+        </div>
+              <div class="carousel-item">
+          <img src="https://8.share.photo.xuite.net/winect/181e133/19224477/1190335126_m.jpg" class="center-block w-60"  alt="...">
+        </div>
+              <div class="carousel-item">
+          <img src="https://8.share.photo.xuite.net/winect/181e113/19224477/1192196470_m.jpg" class="center-block w-60" alt="...">
+        </div>
+      </div>
+</div>
+<!--  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">-->
+<!--    <span class="carousel-control-prev-icon" aria-hidden="True"></span>-->
+<!--    <span class="sr-only ">Previous</span>-->
+<!--  </a>-->
+<!--  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">-->
+<!--    <span class="carousel-control-next-icon" aria-hidden="True"></span>-->
+<!--    <span class="sr-only ">Next</span>-->
+<!--  </a>-->
+</div>
+
+
+</body>
+{% endblock content %}
+
+{% block styles %}
+<style>
+    /* h1 {
+        color: green;
+    } */
+    .hide {
+        display: none;
+    }
+
+    #inputFbUrlWarning {
+        color: crimson;
+    }
+
+    .tc1{
+    color:white;
+    }
+
+    .bgc1{
+    background-size:cover;
+    background-repeat: no-repeat;
+    background-image: url( 'https://images.pexels.com/photos/290316/pexels-photo-290316.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260' )
+    }
+
+    .rotateImage{
+    margin-right:40%;
+    }
+
+</style>
+{% endblock styles %}
+
+
+{% block scripts %}
+<script>
+
+    var userFbInfo = null;
+
+    // 載入 FB SDK
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "https://connect.facebook.net/zh_TW/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    // 初始化完成確認用戶登入狀態
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '595878853845208',
+            cookie: true,
+            xfbml: true,
+            version: 'v1.0'
+        });
+        FB.AppEvents.logPageView();
+        checkLoginState()
+    };
+
+    // 處理各種登入身份
+    function statusChangeCallback(response) {
+        console.log(response);
+        var target = document.getElementById("FB_STATUS_1"),
+            html = "";
+
+        // 登入 FB 且已加入會員 -> 確認有無創建會員，有的話轉跳，沒有的話跳出 fburl 欄位
+        if (response.status === 'connected') {
+            html = "已登入 FB，並加入Innopro 應用程式<br/>";
+
+            FB.api('/me?fields=id,name,email', function (response) {
+                console.log(response);
+                userFbInfo = response;
+                html += "會員暱稱：" + response.name + "<br/>";
+                html += "會員 email：" + response.email;
+                target.innerHTML = html;
+                checkIfConnected()
+            });
+        }
+
+        // 登入 FB, 未偵測到加入會員 -> 需要點擊 fb 登入按鈕
+        else if (response.status === "not_authorized") {
+            target.innerHTML = "已登入 FB，但未授權加入Innopro 應用程式";
+        }
+
+        // 未登入 FB -> 需要點擊登入 fb 按鈕
+        else {
+            target.innerHTML = "未登入 FB";
+        }
+    }
+
+    // 確認是否授權創潮登入
+    function checkLoginState() {
+        FB.getLoginStatus(function (response) {
+            statusChangeCallback(response);
+            FB.api('/me?fields=id,name,email', function (response) {
+                userFbInfo = response;
+            });
+        });
+    }
+
+    // 確認是否有連結 appuid 與 fburl（是否已經創建會員）
+    function checkIfConnected() {
+        $.ajax({
+            type: "POST",
+            url: "/login/",
+            data: userFbInfo,
+            datatype: "json",
+            success: function (data) {
+                console.log('登入回傳資料')
+                console.log(data)
+                // 有創建會員 -> 轉跳到用戶的團購頁面
+                if (data.isUser) {
+                    // redirect
+                    // window.location.href = '/session'
+                    $('.to-session').removeClass('hide')
+                    console.log('is user')
+                } else {
+                    // 沒有創建會員 -> 顯示 fburl input
+                    $('#signup').toggleClass('hide')
+                }
+            },
+            // error: function (e) {
+            //     console.log(e)
+            //     alert(e)
+            // }
+        })
+    }
+
+    // 連結 appuid 與 fburl
+    $('#submitFburl').click(function () {
+        connectFbUrlAndAppuid(userFbInfo)
+    })
+    function connectFbUrlAndAppuid(userFbInfo) {
+        let fburl = $('#inputFbUrl').val()
+        userFbInfo.fburl = fburl;
+        $.ajax({
+            type: "POST",
+            url: "/login/",
+            data: userFbInfo,
+            datatype: "json",
+            success: function (data) {
+                console.log(data)
+
+                // 輸入的 fburl 有問題，或是已經被註冊過，顯示錯誤訊息
+                if (data.resMessage) {
+                    $('#inputFbUrlWarning').text(data.resMessage);
+                    $('#inputFbUrlWarning').toggleClass('hide');
+                } else {
+                    console.log('已經完成創建會員與登入 -> 轉跳到團購頁面')
+                    alert('已經連結完成，將會自動轉跳至團購清單頁面')
+                    window.location.href = '/session'
+                }
+            },
+            // error: function (e) {
+            //     console.log(e)
+            //     alert(e)
+            // }
+        })
+    }
+
+    let toSession = function(){
+        
+        window.location.href = '/session'
+    }
+
+</script>
+{% endblock %}

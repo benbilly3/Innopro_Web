@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+<body>
+    <div class="container">
+        <h1>Session {{status}}</h1>
+        <span>{{session.update_announcement|linebreaks}}</span>
+        <p>{{ user }}</p>
+        <p>{{ member }}</p>
+    </div>
+
+</body>
+{% endblock content %}
+
+{% block styles %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // let data = {
+    //     'aa': '123'
+    // }
+    // $.ajax(
+    //     {
+    //         //提交數據的類型 POST GET
+    //         type: "POST",
+    //         //提交的網址
+    //         url: "/session/12345",
+    //         //提交的數據
+    //         data: data,
+    //         //返回數據的格式
+    //         datatype: "json",
+    //         //成功返回之後調用的函數             
+    //         success: function (data) {
+    //             console.log(data)
+    //         },
+    //         //調用出錯執行的函數
+    //         error: function (e) {
+    //             console.log(e)
+    //             //請求出錯處理
+    //         }
+    //     }
+    // );
+</script>
+{% endblock %}

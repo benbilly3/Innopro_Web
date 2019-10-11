@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
+<body>
+    {% if fbuid is None %}
+    <p>
+        <h2>T大-2019-8月團- 【開放清單公告】-2019 / 8/ 22</h2>
+        <b>** 結團時間： 2019 / 8 / 27（二 ) 上午 10 : 00 停止修改清單 ** </b>
+        <br>
+        ( 因應臉書規則改變，志同道合-本月團購單獨結團, 不併入創潮系統查詢 )
+        <br><br>
+        ★ 本月-特別注意事項 ★
+        <br>
+        ① 請至下方輸入欄，輸入個人FB連結網址送出，即可查詢及修改您的訂單。
+        <br>
+        ② 若要修改訂單，請於酒款的【修改訂單數量】變更數量。
+        <br>
+        ③ 因FB問題，本月不提供寄存服務。
+        <br>
+        ④ 本月FB問題造成不便，特別優惠買6瓶以上即享免運。
+        <br>
+        ⑤ 任何問題需要協助請點擊訂單下方，聯繫你的專屬小幫手。
+    </p>
+    {% if user.is_superuser %}
+    <h2>FB 連結：</h2>
+    <input id="input_fb_url" type="text" name="fb_url" value=""> <button id="click">Submit</button>
+    <br><br>
+    <text id="warning" class="warning"></text>
+    <div class="notes_fb_format">
+        註：您的 FB 個人連結可能是以下的形式之一：
+        <ul>
+            <li>https://www.facebook.com/JohnDoe</li>
+            <li>https://m.facebook.com/sally.struthers</li>
+            <li>https://www.facebook.com/profile.php?id=24353623</li>
+        </ul>
+    </div>
+    {% endif %}
+
+    {% elif results is None %}
+
+    <h2>此用戶沒有近期訂單</h2>
+    <a href="/updateOrder">回查詢頁面</a>
+    {% else %}
+    <h2 id="userName" fbuid="{{ member.fbid }}">FB Name: {{ member.name }}</h2>
+    <h2>201908 Tda志同道合團購買數量修正確認清單</h2>
+
+    <table id="results">
+        <tr>
+            <th>編號</th>
+            <th>品名</th>
+            <th>售價</th>
+            <th>原留言數量</th>
+            <th>總額</th>
+            <th>
+                修改訂單數量
+                <!-- <br>
+                <text class="warning">*只能減少不能增加</text> -->
+            </th>
+        </tr>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.product.wine_id }}</td>
+            <td>{{ order.product.name }}</td>
+            <td>$ {{ order.product.price }}</td>
+            <td style="text-align: center;">{{ order.amount }}</td>
+            <td class=item_price>$ {% widthratio order.product.price 1 order.amount %}</td>
+            <td><input class="input_new_amount" itemid="{{ order.product.wine_id }}" type="number" min="0" max="99"
+                    value="{{ order.amount }}"></td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="4">總額（不含運費）</td>
+            <td colspan="1" id=total_price>$ {{ all_price }}</td>
+            <td></td>
+        </tr>
+    </table>
+
+    <br>
+    <br>
+
+    <h2>用戶基本資料</h2>
+    <table id="member_info">
+        <tr>
+            <th class="user_info_title"></th>
+            <td></td>
+            <td>修改/新增資料</td>
+        </tr>
+        <tr>
+            <th class="user_info_title">email</th>
+            <td>{{ member.email }}</td>
+            <td>
+                <input id="input_email" type="email" size="30" placeholder="無資料者必填"></td>
+            </td>
+        </tr>
+        <!-- <tr>
+            <th class="user_info_title">城市</th>
+            <td>{{ 0 }}</td>
+        </tr>
+        <tr>
+            <th class="user_info_title">地區</th>
+            <td>{{ 0 }}</td>
+        </tr>
+        <tr>
+            <th class="user_info_title">地址</th>
+            <td>{{ 0 }}</td>
+        </tr> -->
+        <tr>
+            <th class="user_info_title">收件人</th>
+            <td>{{ member.shipname }}</td>
+            <td>
+                <input id="input_name" type="text" size="30" placeholder="無資料者必填"></td>
+            </td>
+        </tr>
+        <!-- <tr>
+            <th class="user_info_title">統一編號</th>
+            <td>{{ 0 }}</td>
+        </tr>
+        <tr>
+            <th class="user_info_title">發票抬頭</th>
+            <td>{{ 0 }}</td>
+        </tr> -->
+    </table>
+    <br>
+    {% if member.helper %}
+    有任何問題請聯繫你的小幫手：<a href="{{ member.helper.user_profile_url }}" target="_blank">{{ member.helper.name }}</a>
+    {% else %}
+    有任何問題請聯繫小幫手：<a href="https://www.facebook.com/profile.php?id=100009467621219" target="_blank"> 小幫手佩玄 </a>
+    {% endif %}
+    <br>
+    <br>
+    {% if user.is_superuser %}
+    <button id="submitChange" onclick="submitChange()">送出修改</button>
+    {% endif %}
+    <br>
+    <br>
+    <a href="/updateOrder">回查詢頁面</a>
+    {% endif %}
+
+</body>
+
+</html>
+
+<style>
+    table {
+        width: 100%;
+        /* border: solid black 1px; */
+        border-collapse: collapse;
+    }
+
+    th,
+    td,
+    tr {
+        border: solid black 1px;
+        padding: 5px;
+    }
+
+    td>input {
+        width: 80%;
+    }
+
+    .user_info_title {
+        text-align: left;
+        width: 100px;
+    }
+
+    #submitChange {
+        font-size: 20px;
+        border-radius: 5px;
+    }
+
+    #warning,
+    .warning {
+        font-size: 12px;
+        color: red;
+    }
+
+    .notes_fb_format{
+        font-size: 16px;
+    }
+    
+    .notes_fb_format>ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+
+    .notes_fb_format>ul>li {
+        background-color: #F9F2F4;
+        color: #008000;
+        margin-top: 10px;
+        width: fit-content;
+    }
+</style>
+
+<script>
+    let inputFBUrl = function () {
+        let fb_url = document.querySelector('#input_fb_url').value
+        let data = {
+            'fb_url': fb_url
+        }
+
+        $.ajax({
+            //提交數據的類型 POST GET
+            type: "POST",
+            //提交的網址
+            url: "/fbUrlToId/",
+            //提交的數據
+            data: data,
+            //返回數據的格式
+            datatype: "json",//"xml", "html", "script", "json", "jsonp", "text".
+            //在請求之前調用的函數
+            // beforeSend: function () { $("#msg").html("logining"); },
+            //成功返回之後調用的函數             
+            success: function (data) {
+                console.log(data)
+                if (data.fbuid) {
+                    console.log(data.fbuid)
+                    $('#warning').text('')
+                    window.location = data['fbuid']
+                } else {
+                    console.log('not an user')
+                    $('#warning').text('此帳號沒有近期的訂購記錄')
+                }
+
+            },
+            //調用執行後調用的函數
+            // complete: function (XMLHttpRequest, textStatus) {
+            //     alert(XMLHttpRequest.responseText);
+            //     alert(textStatus);
+            //HideLoading();
+            // },
+            //調用出錯執行的函數
+            error: function (e) {
+                console.log(e)
+                //請求出錯處理
+            }
+        });
+
+
+    }
+
+    let click = document.querySelector('#click')
+    try {
+        click.addEventListener('click', inputFBUrl)
+    } catch (error) {
+        console.log(error)
+    }
+
+    let submitChange = function () {
+        let new_amount_els = $('.input_new_amount')
+        let new_email = $('#input_email').val() !== '' ? $('#input_email').val() : null
+        let new_shipname = $('#input_name').val() !== '' ? $('#input_name').val() : null
+        let new_amount = []
+        $(new_amount_els).each((index, el) => {
+            let item_id = $(el)[0].getAttribute('itemid')
+            let item_amount = $(el).val()
+            new_amount.push(
+                {
+                    'item_id': item_id,
+                    'item_amount': item_amount
+                }
+            )
+        })
+        new_amount = JSON.stringify(new_amount)
+        let data = {
+            'user_fb_id': $('#userName')[0].getAttribute('fbuid'),
+            'new_amount_data': new_amount,
+            'new_shipname': new_shipname,
+            'new_email': new_email
+        }
+        console.log(data)
+        // data = JSON.stringify(data)
+        $.ajax({
+            //提交數據的類型 POST GET
+            type: "POST",
+            //提交的網址
+            url: "/submitUpdateOrder/",
+            //提交的數據
+            data: data,
+            //返回數據的格式
+            datatype: "json",
+            //成功返回之後調用的函數             
+            success: function (data) {
+
+                if (data.status === 'success') {
+                    console.log(data)
+                    window.alert('資料修改成功')
+                    location.reload()
+                } else {
+                    window.alert('系統錯誤，請稍後再試')
+                }
+            },
+            //調用執行後調用的函數
+            // complete: function (XMLHttpRequest, textStatus) {
+            //     alert(XMLHttpRequest.responseText);
+            //     alert(textStatus);
+            //HideLoading();
+            // },
+            //調用出錯執行的函數
+            error: function (e) {
+                console.log(e)
+                //請求出錯處理
+            }
+        });
+
+    }
+
+
+
+</script>

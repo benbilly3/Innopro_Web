@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="flex-center">
+    <div class="container">
+        <div class="flex-center">
+            <div class="unit-1-2 unit-1-on-mobile">
+                <!-- <h1><a href="{% url 'index' %}">Django Auth Example</a></h1> -->
+                
+                <br>
+                <h4>請輸入學校代號與密碼</h4>
+                <form class="form" action="{% url 'login' %}" method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    {% for field in form %}
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {{ field.errors }}
+                        {% if field.help_text %}
+                            <p class="help text-small text-muted">{{ field.help_text|safe }}</p>
+                        {% endif %}
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary btn-sm ">登入</button>
+                    <input type="hidden" name="next" value="{{ next }}"/>
+                </form>
+                <div class="flex-left top-gap text-small">
+                    <div class=""><span>沒有帳號？ 請聯繫相關負責人員</span></div>
+                    <div class="" hidden><span><a href="{% url 'register' %}">立即注册</a></span></div>
+                    <div class="" hidden><span><a href="{% url 'password_reset' %}">忘記密碼？</a></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

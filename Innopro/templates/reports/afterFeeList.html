@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    {% if allSessions != None %}
+        {% include "reports/allSessions.html" %}
+    {% else %}
+        {% include "reports/sessionTitle.html" %}
+        <table class="table table-bordered table-responsive">
+            <thead>
+                <tr class="tr-yellow">
+                    <th>用戶ID</th>
+                    <th>用戶名稱</th>
+                    <th>erp_no</th>
+                    <th>商品代碼</th>
+                    <th>名稱</th>
+                    <th>單價</th>
+                    <th>留言購買數</th>
+                    <th>確認購買數</th>
+                    <th>小計</th>
+                    <th>購買權確認</th>
+                </tr>
+            </thead>
+            {% for data in datas %}
+            {% for order in data.orders %}
+            <tr>
+                <td>{{ order.member__fbid}}</td>
+                <td>{{ order.member__name}}</td>
+                <td>'0{{ order.product__erp_no}}</td>
+                <td>{{ order.product__wine_id }}</td>
+                <td>{{ order.product__name }}</td>
+                <td>{{ order.product__price }}</td>
+                <td>{{ order.amount }}</td>
+                <td>{{ order.confirm_amount }}</td>
+                <td>{{ order.order_total_price }}</td>
+                <td>{{ order.notes}}</td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+        </table>
+    {% endif %}
+</div>
+
+{% endblock content %}
+
+{% block styles %}
+<style>
+    .tr-yellow {
+        background-color: antiquewhite;
+    }
+
+    table{
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+</script>
+{% endblock %}

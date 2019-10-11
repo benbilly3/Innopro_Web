@@ -1,0 +1,484 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container text-center">
+
+  <h3>{{ session.year }}-{{ session.month }} {{ session.group }}志同道合團購買數量修正確認清單</h3>
+  <h5 id="userName" fbuid="{{ member.fbid }}" style="margin-top:3%;">FB Name: {{ member.name }}
+  <span style="margin-left:20%;">訂購品項清單</span>
+  <span class="warnLabel">庫存量紅底為爆量品項</span>
+  </h5>
+
+  {% if message != None %}
+
+  <h4>{{ message }}</h4>
+
+  {% else %}
+  <table id="results">
+    <tr>
+      <th>編號</th>
+      <th>品名</th>
+      <th>售價</th>
+      <th class="d-none d-lg-table-cell">總額</th>
+      <th>
+        訂單數量
+        <!-- <br>
+                        <text class="warning">*只能減少不能增加</text> -->
+      </th>
+      <th>限購</th>
+      <th>庫存量</th>
+    </tr>
+
+<!--    {'product__wine_id': '4513',-->
+<!-- 'amount': 1,-->
+<!-- 'member__name': 'Eddy Chen',-->
+<!-- 'member_id': 219,-->
+<!-- 'product__erp_no': '101004513',-->
+<!-- 'product__name': " Domaine d'Ardhuy 2014 Corton-Charlemagne Grand Cru白",-->
+<!-- 'product__price': 2700,-->
+<!-- 'stockNum': '240',-->
+<!-- 'stockNumFalse': 144,-->
+<!-- 'limit': '無',-->
+<!-- 'sale': '0',-->
+<!-- 'deliverFree': '0',-->
+<!-- 'total_amount': 36,-->
+<!-- 'bgc': 'white'}-->
+
+    {% for order in orders %}
+    <tr class="order_item ">
+      <td >{{ order.product__wine_id }}</td>
+      <td style="max-width: 200px;"><a href="{{order.product__product_article_link}}"
+          target="_blank">{{ order.product__name }}</a></td>
+      <td price={{ order.product__price }}>$ {{ order.product__price }}</td>
+      <td class="item_price d-none d-lg-table-cell">$ {% widthratio order.product__price 1 order.amount %}</td>
+      <td><input class="input_new_amount" itemid="{{ order.product.wine_id }}" type="number" min="0"
+          max="{{ order.limit|default:'60' }}" value="{{ order.amount }}"></td>
+      <td>{{ order.limit}}</td>
+      {% if order.bgc > 0 %}
+      <td style="background-color: red;">{{ order.stockNumFalse}}</td>
+      {% elif order.bgc < 1 %}
+      <td style="background-color: white;">{{ order.stockNumFalse}}</td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+    <tr>
+      <td colspan="3">總額（不含運費）</td>
+      <td id=total_price>$ {{ total_price }}</td>
+      <td colspan="3" class="d-none d-lg-table-cell"></td>
+    </tr>
+  </table>
+
+  <br>
+  <br>
+
+  <h5>用戶基本資料</h5>
+  <table id="member_info">
+    <tr>
+      <th class="user_info_title" style="max-width: 150px;"></th>
+      <td style="max-width: 150px;"></td>
+      <td>修改/新增資料</td>
+    </tr>
+    <tr>
+      <th class="user_info_title" style="max-width: 150px;">email</th>
+      <td style="max-width: 150px;">{{ member.email }}</td>
+      <td>
+        <input id="input_email" type="email" size="30" placeholder="無資料者必填"></td>
+      </td>
+    </tr>
+    <tr>
+      <th class="user_info_title">收件人</th>
+      <td>{{ member.shipname }}</td>
+      <td>
+        <input id="input_name" type="text" size="30" placeholder="無資料者必填"></td>
+      </td>
+    </tr>
+
+  </table>
+  <br>
+  {% if member.helper %}
+  有任何問題請聯繫你的小幫手：<a href="{{ member.helper.user_profile_url }}" target="_blank">{{ member.helper.name }}</a>
+  {% else %}
+  有任何問題請聯繫小幫手：<a href="https://www.facebook.com/profile.php?id=100009467621219" target="_blank"> 小幫手佩玄 </a>
+  {% endif %}
+  <br>
+  <br>
+  <button id="submitChange" class="btn btn-primary" onclick="submitChange()">
+    送出修改
+  </button>
+  {% endif %}
+  <h2 style="margin-top:3%;">運費規則</h2>
+  <img id="ship_rule" src="https://temporary0.s3-ap-southeast-1.amazonaws.com/INNOPRO/ship_rule.png" alt="">
+
+  <div class="pageLoading ">
+    <div class="bottleArea">
+      <h1 class="monsterText">Innopro Wine <br> 創潮酒坊 <span><br> 修改確認清單</h1>
+      <div class="bottle">
+        <div class="label">Bourgogne <br> Grand Cru</div>
+      </div>
+      <div class="bottle2">
+        <div class="label2">Germany <br> Auslese</div>
+      </div>
+    </div>
+    <div class="loading">
+      <div class="bar"></div>
+    </div>
+    <div class="bartext">Loading...</div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block styles %}
+<style>
+  table {
+    width: 100%;
+    /* border: solid black 1px; */
+    border-collapse: collapse;
+  }
+
+  th,
+  td,
+  tr {
+    border: solid black 1px;
+    padding: 10px;
+    word-wrap: break-word;
+    /* All browsers since IE 5.5+ */
+    overflow-wrap: break-word;
+  }
+
+  td>input {
+    width: 80%;
+  }
+
+  .user_info_title {
+    text-align: left;
+    width: 100px;
+  }
+
+  #warning,
+  .warning {
+    font-size: 12px;
+    color: red;
+  }
+
+  .notes_fb_format {
+    font-size: 16px;
+  }
+
+  .notes_fb_format>ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+
+  .notes_fb_format>ul>li {
+    background-color: #F9F2F4;
+    color: #008000;
+    margin-top: 10px;
+    width: fit-content;
+  }
+
+  #ship_rule {
+    width: 80vw;
+    height: auto;
+  }
+
+
+   .warnLabel{
+      background-color:red;
+      width:5px;
+      height:5px;
+      color:blue;
+      margin-left:20%;
+   }
+
+  .bottleArea {
+    flex-direction: row;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  h1 {
+    color: #438e53;
+    font-size: 30px;
+    margin-right: 20px;
+  }
+
+  span {
+    margin-top: 0;
+    opacity: 0.5;
+    color: #396b26;
+  }
+
+  .bottle {
+    width: 100px;
+    height: 210px;
+    position: relative;
+    border-radius: 50% 50% 50% 50%/60% 60% 10% 10%;
+    margin-top: 10px;
+    background: linear-gradient(45deg, #34541f, #4ca351);
+    -webkit-animation: jumping 0.8s infinite alternate;
+    animation: jumping 0.8s infinite alternate;
+  }
+
+  @-webkit-keyframes jumping {
+    50% {
+      top: 0;
+      box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    100% {
+      top: -50px;
+      box-shadow: 0px 120px 50px rgba(0, 0, 0, 0.2);
+      -webkit-transform: scale(1.05);
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes jumping {
+    50% {
+      top: 0;
+      box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    100% {
+      top: -50px;
+      box-shadow: 0px 120px 50px rgba(0, 0, 0, 0.2);
+      -webkit-transform: scale(1.05);
+      transform: scale(1.05);
+    }
+  }
+
+  .bottle .label {
+    width: 80%;
+    height: 25%;
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    border-radius: 50% 50% 50% 50%/10% 10% 10% 10%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    font-family: Copperplate;
+    font-size: 10px;
+    background-color: #f2f0cb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .bottle:before {
+    content: "";
+    display: block;
+    width: 30%;
+    height: 30%;
+    background-color: #1f6022;
+    border-radius: 10px;
+    position: absolute;
+    left: 50%;
+    top: -60px;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    top: -25%;
+    border-radius: 30% 30% 30% 30%/10% 10% 10% 10%;
+  }
+
+  .bottle2 {
+    width: 80px;
+    height: 240px;
+    position: relative;
+    border-radius: 50% 50% 50% 50%/60% 60% 10% 10%;
+    background-color: #cc9f45;
+    background: linear-gradient(45deg, #cc9f45, #f2dd8a);
+    margin-top: -10px;
+    margin-left: 15px;
+    -webkit-animation: jumping 0.8s infinite alternate;
+    animation: jumping 0.8s infinite alternate;
+  }
+
+  @keyframes jumping {
+    50% {
+      top: 0;
+      box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    100% {
+      top: -50px;
+      box-shadow: 0px 120px 50px rgba(0, 0, 0, 0.2);
+      -webkit-transform: scale(1.05);
+      transform: scale(1.05);
+    }
+  }
+
+  .bottle2 .label2 {
+    width: 80%;
+    height: 25%;
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    border-radius: 30% 30% 30% 30%/10% 10% 10% 10%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    font-family: Fantasy;
+    font-size: 10px;
+    background-color: #f4f2e8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .bottle2:before {
+    content: "";
+    display: block;
+    width: 33%;
+    height: 30%;
+    background-color: #fff;
+    border-radius: 10px;
+    position: absolute;
+    left: 50%;
+    top: -25%;
+    border-radius: 50% 50% 50% 50%/10% 10% 10% 10%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    background-color: gold;
+  }
+
+  .pageLoading {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4e990;
+    flex-direction: column;
+    transition: opacity 0.5s 0.5s;
+  }
+
+  .pageLoading.complete {
+    display: None;
+  }
+
+  .pageLoading.complete .bottle,
+  .pageLoading.complete .bottle2 {
+    -webkit-transform: scale(0.5) rotate(360deg);
+    transform: scale(0.5) rotate(360deg);
+  }
+
+  .loading {
+    width: 280px;
+    height: 16px;
+    margin-top: 12px;
+    border-radius: 8px;
+    background-color: #fff;
+    overflow: hidden;
+    transition: 0.5s;
+  }
+
+  .loading .bar {
+    background-color: #dd2727;
+    width: 0%;
+    height: 100%;
+  }
+
+  .bartext {
+    font-size: 28px;
+  }
+
+  #ship_rule {
+    width: 80vw;
+    height: auto;
+  }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  let submitChange = function () {
+    let new_amount_els = $('.input_new_amount')
+    let new_email = $('#input_email').val() !== '' ? $('#input_email').val() : null
+    let new_shipname = $('#input_name').val() !== '' ? $('#input_name').val() : null
+    let new_amount = []
+    $(new_amount_els).each((index, el) => {
+      let item_id = $(el)[0].getAttribute('itemid')
+      let item_amount = $(el).val()
+      new_amount.push(
+        {
+          'item_id': item_id,
+          'item_amount': item_amount
+        }
+      )
+    })
+    new_amount = JSON.stringify(new_amount)
+    let data = {
+      'user_fb_id': $('#userName')[0].getAttribute('fbuid'),
+      'new_amount_data': new_amount,
+      'new_shipname': new_shipname,
+      'new_email': new_email
+    }
+    console.log(data)
+    $.ajax({
+      type: "POST",
+      url: "",
+      data: data,
+      datatype: "json",
+      success: function (data) {
+
+        if (data.status === 'success') {
+          console.log(data)
+          window.alert('資料修改成功')
+          location.reload()
+        } else {
+          window.alert('系統錯誤，請稍後再試')
+        }
+      },
+      //調用出錯執行的函數
+      error: function (e) {
+        console.log(e)
+      }
+    });
+
+  }
+
+  let orderItems = $('.order_item')
+  orderItems.each(function () {
+    $(this).change(function () {
+      let itemPrice = $(this).children()[2].getAttribute('price');
+      let newAmount = $(this).find('input').val();
+      if (newAmount === '') {
+        $(this).find('input').val(0);
+        newAmount = 0;
+      }
+      let newPrice = itemPrice * newAmount;
+      let itemTotalPrice = $(this).children()[3]
+      itemTotalPrice.innerHTML = `$ ${newPrice}`;
+
+      let newTotalPrice = 0
+      orderItems.map(function () {
+        newTotalPrice += parseInt($(this).children()[3].innerHTML.split(' ')[1])
+      })
+      $('#total_price')[0].innerHTML = `$ ${newTotalPrice}`;
+    })
+  })
+
+  let percent = 0
+
+  function eatCount() {
+    $(".monsterText").html("Innopro Wine <br> 創潮酒坊 <span><br>  修改確認清單")
+  }
+
+  let timer = setInterval(function () {
+    $(".bar").css("width", percent + "%")
+    percent += 1
+    if (percent >= 100) {
+      $(".pageLoading").addClass("complete")
+      setTimeout(eatCount, 5000)
+      clearInterval(timer)
+    }
+  }, 50)
+</script>
+{% endblock %}

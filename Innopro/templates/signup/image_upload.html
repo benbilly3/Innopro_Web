@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex-center">
+    <div class="container">
+        <div>
+            {% if user.is_authenticated %}
+            <br>
+            <h4>您好，來自 {{ user.school_name }} 的使用者</h4>
+            <br>
+            <form action="{% url 'image' %}" enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+
+                <h4>現有圖片：</h4>
+                <div class="row">
+                    {% for photo in photos %}
+                    <div style="margin: 10px; display: flex; flex-direction: column; align-items: center;">
+                        <a href="{{ photo.photo.url }}" target="_blank">
+                            <img class="img-thumbnail img-fluid" src="{{ photo.photo.url }}" alt=""
+                                style="height: 200px">
+                        </a>
+                        <p style="text-align: center; margin: 0px">{{ photo.name }}</p>
+                        <br>
+                        <h6 style="text-align: left;">圖片說明：</h6>
+                        <div>
+                            <input type="text" name="current_photo" id="{{ photo.id }}" value="{{ photo.id}}" hidden>
+                            <input type="text" name="modify_comment" id="modify_comment_{{ photo.id }}"
+                                value="{{ photo.photo_comment|default_if_none:'' }}">
+                        </div>
+                        <div>
+                            <input id="delete_{{ photo.id }}" type="checkbox" class="form-check-input"
+                                name="delete_photo" value="{{ photo.id }}">
+                            <label class="form-check-label" for="delete_{{ photo.id }}">刪除</label>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <hr>
+                <h4>新增圖片：</h4>
+                <div id="input-wrapper">
+                    <!-- <div id="0" class="input-field">
+                        <input id="file_0" class="image-input" type="file" name="vote_photo" hidden>
+                        <text id="image_0_name" class="photo-name"></text>
+                        <label id="select_0_image" class="btn btn-primary select-photo" for="file_0"> 選擇圖片 </label>
+                        <label id="remove_0_image" class="btn btn-danger remove-photo"> 刪除 </label>
+                    </div> -->
+
+                </div>
+                <button type="button" id="add-field" class="btn btn-primary">新增圖片</button>
+                <br>
+                <text class="remind">* 請先選擇圖片，再填寫圖片說明</text>
+                <br>
+                <text class="remind">* 上傳檔案類型以 jpg、jpeg、png 為限，單個檔案大小限制為 3MB</text>
+                <text id="warnings"></text>
+                <br>
+                <br>
+                <a href="/report"><button type="button" class="btn btn-secondary btn-xs">取消</button></a>
+                <button type="submit" class="btn btn-success btn-md">確認更新</button>
+            </form>
+
+            {% else %}
+            <p>您還沒有登入
+                <a href="{% url 'login' %}?next={{ request.path }}">
+                    <button class="btn btn-default">登入</button>
+                </a>
+                或者
+                <a href="{% url 'signup:register' %}?next={{ request.path }}">
+                    <button class="btn btn-default">註冊</button>
+                </a>
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block styles %}
+<style>
+    .remove-photo {
+        /* display: none; */
+    }
+
+    label {
+        margin-left: 5px;
+        /* margin-right: 5px */
+    }
+
+    .remind {
+        color: red;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let inputFields = $('.input-field')
+    let addFieldBtn = $('#add-field')
+    let removeBtn = $('.remove-photo')
+    let inputWrapper = $('#input-wrapper')
+    let warningField = $('#warnings')[0]
+    var inputCounter = 0
+    let inputTotal = 0
+    let inputTemplate = ''
+
+    let updateData = function () {
+        // console.log('inputTemplate')
+        inputFields = $('.input-field')
+        // addFieldBtn = $('#add-field')
+        removeBtn = $('.remove-photo')
+        inputWrapper = $('#input-wrapper')
+        inputTotal = $('.input-field').length
+
+        if (inputTotal >= 5) {
+            addFieldBtn.prop('disabled', true)
+            warningField.innerHTML = '同時最多上傳 5 個檔案'
+        } else {
+            addFieldBtn.prop('disabled', false)
+            warningField.innerHTML = ''
+        }
+
+        inputTemplate = `
+                    <div id="${inputCounter}" class="input-field">
+                        <input id="file_${inputCounter}" class="image-input" type="file" name="vote_photo" accept="image/jpg,image/png,image/jpeg,image/gif" hidden>
+                        <text id="image_${inputCounter}_name" class="photo-name">
+                                <尚未選擇照片>
+                        </text>
+                        圖片說明： <input id="comment_${inputCounter}" class="comment-input" type="text" name="photo_comment">
+                        <label id="select_${inputCounter}_image" class="btn btn-primary select-photo" for="file_${inputCounter}">
+                                選擇圖片
+                        </label>
+                        <label id="remove_${inputCounter}_image" class="btn btn-danger remove-photo"> 刪除圖片 </label>
+                    </div>
+                    `
+
+        // '<div id="' + inputCounter +
+        //     '" class="input-field"><input id=file_' + inputCounter +
+        //     ' class="image-input" type="file" name="vote_photo" hidden><text id="image_' +
+        //     inputCounter + '_name" class="photo-name"><尚未選擇照片></text><label id="select_' +
+        //     inputCounter + '_image" class="btn btn-primary select-photo" for="file_' +
+        //     inputCounter + '">選擇圖片</label><label id="remove_' + inputCounter +
+        //     '_image" class="btn btn-danger remove-photo"> 刪除圖片 </label></div>'
+
+        $.each(inputFields, function () {
+            inputFields.off("change")
+            inputFields.on("change", function () {
+                let fileValue = $(this).children('.image-input')[0].value
+                let delBtn = $(this).children('.remove-photo')
+                let fileName = fileValue.replace(/C:\\fakepath\\/i, '')
+                let fileSize = $(this).children('.image-input')[0].files[0].size
+                if (fileSize > 3145728) {
+                    alert('單個檔案最大限制為 3MB')
+                } else {
+                    $(this).children('.photo-name')[0].innerHTML = fileName
+                    if (fileValue == '') {
+                        $(this).remove()
+                    } else if (fileValue == undefined) {
+                        delBtn.hide()
+                    } else {
+                        delBtn.show()
+                    }
+                    updateData()
+                }
+
+            })
+        })
+
+        addFieldBtn.off("click")
+        addFieldBtn.on("click", function () {
+            if (inputTotal >= 5) {
+                alert('最多五個')
+            } else {
+                inputWrapper.append(inputTemplate)
+                inputCounter += 1
+            }
+            updateData()
+        })
+
+        $.each(removeBtn, function () {
+            removeBtn.off("click")
+            removeBtn.on("click", function () {
+                // console.log(this)
+                $(this).parent().remove()
+                updateData()
+            })
+        })
+
+    }
+
+    updateData()
+
+
+    // var inputCounter = 0
+    // const onUpdate = function () {
+    //     imageInputs = $('.image-input')
+    //     removeBtns = $('.remove-photo')
+    //     selectBtn = $('.select-photo')
+    //     inputCounter = imageInputs.length
+
+    //     $.each(imageInputs, function () {
+    //         $(this).off("change")
+    //         $(this).on("change", function () {
+    //             previousValue = $(this).data('pre')
+    //             console.log('changing')
+    //             console.log(this.value)
+    //             console.log('previous', previousValue)
+    //             delete_button = $(this).siblings('.remove-photo')
+    //             select_button = $(this).siblings('.select-photo')[0]
+    //             name_tag = $(this).siblings('.photo-name')[0]
+    // inputTemplate = '<div id="' + inputCounter +
+    //     '" class="input-field"><input id=file_' + inputCounter +
+    //     ' class="image-input" type="file" name="vote_photo" hidden><text id="image_' +
+    //     inputCounter + '_name" class="photo-name"></text><label id="select_' +
+    //     inputCounter + '_image" class="btn btn-primary select-photo" for="file_' +
+    //     inputCounter + '">選擇圖片</label><label id="remove_' + inputCounter +
+    //     '_image" class="btn btn-danger remove-photo"> 刪除圖片 </label></div>'
+
+    //             if (previousValue == undefined) {
+    //                 delete_button.show()
+    //                 name_tag.innerHTML = this.value.replace(/C:\\fakepath\\/i, '')
+    //                 $(this).parent().parent('#input-wrapper').append(inputTemplate)
+    //                 $(this).data('pre', this.value)
+    //                 onUpdate()
+    //             } else {
+    //                 if (previousValue !== '') {
+    //                     name_tag.innerHTML = this.value.replace(/C:\\fakepath\\/i, '')
+    //                     $(this).data('pre', this.value)
+    //                     onUpdate()
+    //                 } else if (this.value='') {
+    //                     if(inputCounter>1){
+    //                         $(this).parent().remove()
+    //                     }else{
+    //                         name_tag.innerHTML = ''
+    //                         delete_button.hide()
+    //                     }
+    //                 }
+    //             }
+
+    // if (this.value == '') {
+    //     delete_button.hide()
+    //     name_tag.innerHTML = ''
+    //     if (inputCounter > 1) {
+    //         $(this).parent().remove()
+    //     }
+    // } else if (previousValue !== '') {
+    //     name_tag.innerHTML = this.value.replace(/C:\\fakepath\\/i, '')
+    //     $(this).data('pre', this.value)
+    //     onUpdate()
+    // } else {
+    //     delete_button.show()
+    //     name_tag.innerHTML = this.value.replace(/C:\\fakepath\\/i, '')
+
+    //     $(this).parent().parent('#input-wrapper').append(inputTemplate)
+    //     $(this).data('pre', this.value)
+    //     onUpdate()
+    // }
+    //         })
+    //     })
+
+
+    //     $.each(removeBtns, function () {
+    //         $(this).off("click")
+    //         $(this).on("click", function () {
+    //             $(this).siblings(".image-input")[0].value = ''
+    //             $(this).siblings('.photo-name')[0].innerHTML = ''
+    //             $(this).hide()
+    //             if (inputCounter > 1) {
+    //                 $(this).parent().remove()
+    //             }
+    //             onUpdate()
+    //         })
+    //     })
+    // }
+
+    // onUpdate()
+</script>
+{% endblock %}

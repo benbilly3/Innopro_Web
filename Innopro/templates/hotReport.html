@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<body>
+    <br>
+    <div>
+        <h2 class="center">{{session.session_id}} 品項熱門度查詢</h2>
+        <button class='btn btn-light dl-csv-btn' onclick="download()">Download-CSV<span class="warnlabel">橘底為爆量!</span></button>
+        <br>
+    </div>
+    <br>
+    <div class="table">
+        <table >
+            <thead>
+                <tr class="tr-blue">
+                    <th>編號</th>
+                    <th>品名</th>
+                    <th>售價</th>
+                    <th>限購</th>
+                    <th>買Ｘ送Ｙ</th>
+                    <th>單品免運</th>
+                    <th>總人數</th>
+                    <th>總瓶數</th>
+                    <th>庫存量</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for info in datas %}
+                <tr style="background-color: {{ info.bgc }};">
+                    <td>{{ info.wine_id }}</td>
+                    <td class="wineName_td">
+                        <a href="{{ info.product__product_article_link }}" target="_blank">
+                        {{ info.wineName }}</td>
+                    <td>{{ info.price }}</td>
+                    <td>{{ info.limit }}</td>
+                    <td>{{ info.sale }}</td>
+                    <td>{{ info.deliverFree }}</td>
+                    <td>{{ info.bottleCount }}</td>
+                    <td>{{ info.amount }}</td>
+                    <td>{{ info.stockNumFalse }}</td>
+                </tr>
+            </tbody>
+            {% endfor %}
+    <!--        <tr>-->
+    <!--            <td colspan="4">總收入（未含結算規則）</td>-->
+    <!--            <td>{{ total_income }}</td>-->
+    <!--        </tr>-->
+        </table>
+    </div>
+</body>
+
+{% endblock content %}
+
+{% block styles %}
+<style>
+    body {
+        text-align: center;
+    }
+
+    .center {
+        text-align: center;
+        margin: auto;
+    }
+
+    .warnlabel{
+    background-color:#fccf80;
+    width:5px;
+    height:5Px;
+    margin-left:20px;
+    }
+
+
+    .table {
+      width: 100%;
+      height: 500px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    table {
+      width: 80%;
+      display: block;
+      border-spacing: 0;
+      border-collapse: collapse;
+      height: 100%;
+      border-radius: 3px;
+      overflow-x: scroll;
+      position: relative;
+    }
+
+    table thead th {
+      position: sticky;
+      top: 0;
+    }
+
+    table tbody {
+      overflow-y: scroll;
+    }
+
+    table th {
+      padding: 5px;
+      border-width: 0 0 1.5px 1.5px;
+      border-style: solid;
+      border-color: #f4f5f9;
+      background-color: navy;
+      color: #c0c7da;
+      text-align:center;
+    }
+
+
+    .wineName_td{
+        text-align: left;
+        max-width:15%;
+    }
+
+    .btn {
+        width: 120px;
+        height: 40px;
+        font-size: 14px;
+        position: relative;
+        left: 30vw;
+    }
+
+
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const headRow = [...document.querySelectorAll('table thead tr td')]
+        .map(column => column.textContent.trim());
+
+    const rows = [...document.querySelectorAll('table tbody tr')]
+        .map(tr => [...tr.querySelectorAll('td')]
+            .map(td => td.textContent.trim())
+        );
+
+    const content = [headRow, ...rows]
+        .map(row => row.map(str => '"' + (str ? str.replace(/"/g, '""') : '') + '"'))
+        .map(row => row.join(','))
+        .join('\n');
+
+    const BOM = '\uFEFF'; // utf-8 byte-order-mark
+    const csvBlob = new Blob([BOM + content], { type: 'text/csv;charset=utf-8' });
+
+
+    function download() {
+        if (window.navigator.msSaveOrOpenBlob) {
+            // IE hack; see http://msdn.microsoft.com/en-us/library/ie/hh779016.aspx
+            navigator.msSaveBlob(csvBlob, 'exampleTable.csv');
+        } else {
+            const objectUrl = URL.createObjectURL(csvBlob);
+            const a = document.createElement('a');
+            a.setAttribute('href', objectUrl);
+            a.setAttribute('download', '團購銷售統計.csv');
+
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    }
+
+</script>
+{% endblock %}

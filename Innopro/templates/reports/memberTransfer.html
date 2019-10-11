@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    {% if allSessions != None %}
+    {% include "reports/allSessions.html" %}
+    {% else %}
+    {% include "reports/sessionTitle.html" %}
+    <div class="uploadBSForm">
+        <h6>上傳銀行對帳單</h6>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input id="bsFile" type="file" name="bs">
+            <button id="uploadBS" type="button">上傳</button>
+        </form>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    <br>
+    <table class="table table-bordered table-responsive">
+        <thead>
+            <tr>
+                <th>用戶名稱</th>
+                <th>訂單編號</th>
+                <th style="min-width: 100px">小幫手</th>
+                <th>email</th>
+                <th>FB 名稱</th>
+                <th>fbuid</th>
+                <th>手機</th>
+                <th>取貨方式</th>
+                <th style="min-width: 200px">地址</th>
+                <th>配送時段</th>
+                <th>指定配送日</th>
+                <th>抬頭</th>
+                <th>統編</th>
+                <th>備註</th>
+                <th>自取金額</th>
+                <th>運費</th>
+                <th>應匯款金額</th>
+                <th>匯款金額</th>
+                <th>匯款帳戶</th>
+                <th>小幫手<br>註記</th>
+                <!-- <th>修改匯款資訊連結</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for checkout in checkouts %}
+            <tr style="background-color: {{ checkout.amount_status }};">
+                <td>
+                    <a href="{{ checkout.member__user_profile_url }}"
+                        target="_blank">{{ checkout.member__shipname }}</a>
+                </td>
+                <td>{{ checkout.checkout_id }}</td>
+                <td>{{ checkout.member__helper__name }}</td>
+                <td>{{ checkout.member__email |default_if_none:''}}</td>
+                <td>{{ checkout.member__name }}</td>
+                <td>{{ checkout.member__fbid |default_if_none:''}}</td>
+                <td>{{ checkout.member__phone |default_if_none:''}}</td>
+                <td>{{ checkout.ship_method |default_if_none:''}}</td>
+                <td>{{ checkout.member__city }} {{checkout.member__county }} {{checkout.member__address }}</td>
+                <td>{{ checkout.ship_time |default_if_none:''}}</td>
+                <td>{{ checkout.ship_date |default_if_none:''}}</td>
+                <td>{{ checkout.member__invoice_title |default_if_none:''}}</td>
+                <td>{{ checkout.member__invoice_id |default_if_none:''}}</td>
+                <td>{{ checkout.notes |default_if_none:''}}</td>
+
+                <td>{{ checkout.price_after_disc |default_if_none:''}}</td>
+                <td>{{ checkout.ship_fee |default_if_none:''}}</td>
+                <td>{{ checkout.amount_payable |default_if_none:''}}</td>
+
+                <td>{{ checkout.transfer_amount |default_if_none:''}}</td>
+                <td>{{ checkout.transfer_account |default_if_none:''}}</td>
+                <td class="td-helper-notes">
+                    <input type="text" id="{{ checkout.checkout_id }}"
+                        value="{{ checkout.helper_notes |default_if_none:''}}"></input>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block styles %}
+<style>
+    td {
+        padding: 5px;
+        min-width: 100px;
+    }
+
+    .td-helper-notes {
+        min-width: 200px;
+    }
+
+    table input {
+        width: 100%;
+        display: block;
+    }
+
+    .uploadBSForm {
+        text-align: left;
+    }
+</style>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    $('#uploadBS').click(function () {
+        console.log('uploading');
+        let fd = new FormData();
+        let file = $('#bsFile')[0].files[0];
+        fd.append('file', file);
+        fd.append('message', 'message');
+        console.log(fd)
+
+        $.ajax({
+            url: '/uploadBS/',
+            type: 'POST',
+            data: fd,
+            contentType: false,
+            processData: false,
+            success: function (data, status, xhr) {
+                console.log('success')
+                location.reload()
+            },
+            error: function (data, status, xhr) {
+            }
+        })
+    })
+
+    $(document).ready(function () {
+        let helper_notes = $('.td-helper-notes')
+        helper_notes.each(function () {
+            let $mainEl = $(this)[0];
+
+            let $inputEl = $($mainEl.children[0])
+            $inputEl.on('keyup', function () {
+                let checkout_id = $(this).attr('id');
+                let helper_notes_val = $(this).val();
+                updateHelperNotes(checkout_id, helper_notes_val);
+            })
+        })
+    })
+
+    function updateHelperNotes(checkout_id, helper_notes) {
+        let data = {
+            checkout_id: checkout_id,
+            helper_notes: helper_notes
+        }
+
+        $.ajax({
+            url: '/memberTransfer/',
+            type: 'POST',
+            data: data,
+            success: function (data, status, xhr) {
+
+            },
+            error: function (data, status, xhr) {
+                console.log(data)
+            }
+        })
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    {% if allSessions != None %}
+        {% include "reports/allSessions.html" %}
+    {% else %}
+        {% include "reports/sessionTitle.html" %}
+
+    <table class="table table-bordered table-responsive">
+        <thead>
+            <tr class="tr-blue">
+                <th>訂單編號</th>
+                <th>取貨方式</th>
+                <th>FB姓名</th>
+                <th>料號 </th>
+                <th>酒款編號</th>
+                <th>名稱 </th>
+                <th>數量 </th>
+                <th>總量</th>
+                <th>收件人</th>
+                <th>電話</th>
+                <th>手機</th>
+                <th>配送地址</th>
+                <th>指定配送日</th>
+                <th>指定配時段</th>
+                <th>備註</th>
+            </tr>
+        </thead>
+        {% for data in datas %}
+        {% for order in data.orders %}
+        <tr>
+            <td>{{ data.checkout.0.checkout_id}}</td>
+            <td>{{ data.checkout.0.ship_method }}</td>
+            <td>{{ data.orders.0.member__name}}</td>
+            <td>'0{{ order.product__erp_no}}</td>
+            <td>{{ order.product__wine_id }}</td>
+            <td>{{ order.product__name }}</td>
+            <td>{{ order.confirm_amount }}</td>
+            <td></td>
+            <td>{{ data.orders.0.member__shipname}}</td>
+            <td>'{{ data.orders.0.member__phone}}</td>
+            <td>'{{ data.orders.0.member__phone}}</td>
+            <td>{{ data.orders.0.member__city }} {{data.orders.0.member__county }} {{data.orders.0.member__address }}
+            </td>
+            <td>{{ data.checkout.0.ship_time }}</td>
+            <td>{{ data.checkout.0.ship_date }}</td>
+            <td>{{ data.checkout.0.notes}}</td>
+        </tr>
+        {% endfor %}
+        <tr class="tr-yellow">
+            <td>{{ data.checkout.0.checkout_id}}</td>
+            <td>{{ data.checkout.0.ship_method }}</td>
+            <td>{{ data.orders.0.member__name}}</td>
+            <td>總計</td>
+            <td>0</td>
+            <td>自取付款金額</td>
+            <td></td>
+            <td>{{ data.checkout.0.total_amount}}</td>
+            <td>{{ data.orders.0.member__shipname}}</td>
+            <td>'{{ data.orders.0.member__phone}}</td>
+            <td>'{{ data.orders.0.member__phone}}</td>
+            <td>{{ data.orders.0.member__city }} {{data.orders.0.member__county }} {{data.orders.0.member__address }}
+            </td>
+            <td>{{ data.checkout.0.ship_time}}</td>
+            <td>{{ data.checkout.0.ship_date }}</td>
+            <td>{{ data.checkout.0.notes}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</div>
+
+{% endblock content %}
+
+{% block styles %}
+<style>
+    .tr-yellow {
+        background-color: yellow;
+    }
+
+    .tr-blue {
+        background-color: navy;
+        color: white;
+    }
+
+    table,
+    table tr th,
+    table tr td {
+        text-align: center;
+        min-width: 100px;
+    }
+
+    td {
+        padding: 5px 5px;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+</script>
+{% endblock %}

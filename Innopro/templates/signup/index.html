@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex-center">
+
+    {% if user.is_authenticated %}
+    <div class="container">
+        <br>
+        <h4>您好，來自 {{ user.school_name }} 的使用者</h4>
+        <div class="row" style="margin-top: 20px">
+            <div class="col-sm">
+                <h5>學校基本資料</h5>
+                <p>學校名稱：{{ user.school_name }}</p>
+                <p>學校代碼：{{ user.school_id }}</p>
+                <!-- <p>學校地址：{{ user.school_address }}</p> -->
+                <p>校長：{{ user.president }}</p>
+                <p>校長電話：{{ user.president_phone|default_if_none:'' }}</p>
+            </div>
+
+
+            <div class="col-sm">
+                <h5>承辦人資料</h5>
+                <p>承辦人姓名：{{ user.contact_name }}</p>
+                <p>職稱：{{ user.contact_title }}</p>
+                <p>處室：{{ user.contact_office }}</p>
+                <p>電話及分機：{{ user.contact_office_phone }}</p>
+                <!-- <p>傳真：{{ user.contact_fax }}</p> -->
+                <p>手機：{{ user.contact_cell_phone }}</p>
+                <p>E-mail：{{ user.contact_email|default_if_none:'' }}</p>
+            </div>
+
+            <div class="col-sm">
+                <h5>選舉資訊</h5>
+                {% if user.event_type == '1' %}
+                <p>活動參與類別：<br>學生會長選舉、模擬公投與入校宣導</p>
+                {% else %}
+                <p>活動參與類別：<br>學生會長選舉與模擬公投</p>
+                {% endif %}
+                <p>活動開始日期：{{ votedata.startDate }} {{ votedata.startTime }}</p>
+                <p>活動結束日期：{{ votedata.endDate }} {{ votedata.endTime }}</p>
+            </div>
+
+        </div>
+        <a href="/info">
+            <button type="button" class="btn btn-secondary btn-md">編輯基本資料</button>
+        </a>
+    </div>
+
+    {% else %}
+    <div class="container">
+        <p>您還沒有登入
+            <a href="{% url 'login' %}?next={{ request.path }}">
+                <button class="btn btn-default">登入</button>
+            </a>
+            或者
+            <a href="{% url 'signup:register' %}?next={{ request.path }}">
+                <button class="btn btn-default">註冊</button>
+            </a>
+        </p>
+
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

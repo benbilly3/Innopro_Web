@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    {% if allSessions != None %}
+        {% include "reports/allSessions.html" %}
+    {% else %}
+        {% include "reports/sessionTitle.html" %}
+    <table class="table table-bordered table-responsive">
+        <thead>
+            <tr class="tr-blue">
+                <th>TG006</th>
+                <th>TG007</th>
+                <th>TG008</th>
+                <th>TG014</th>
+                <th>TG015</th>
+                <th>TG016</th>
+                <th>TG017</th>
+                <th>TG018</th>
+                <th>TG021</th>
+                <th>TG026</th>
+                <th>TG027</th>
+                <th>TG031</th>
+                <th>TG106</th>
+                <th>TG107</th>
+                <th>TG109</th>
+                <th>TH004</th>
+                <th>TH005</th>
+                <th>TH006</th>
+                <th>TH008</th>
+                <th>TH012</th>
+                <th>TH018</th>
+                <th>TH031</th>
+                <th>TH074</th>
+                <th>TG020</th>
+                <th>TH003</th>
+                <th>TG050</th>
+                <th>TG051</th>
+                <th>TH013</th>
+                <th>TH038</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tr class="tr-blue">
+            <td>業務員</td>
+            <td>發票抬頭</td>
+            <td>送貨地址</td>
+            <td>發票號碼</td>
+            <td>統一編號</td>
+            <td>發票聯數</td>
+            <td>課稅別</td>
+            <td>發票地址</td>
+            <td>發票日期</td>
+            <td>收款員</td>
+            <td>備註</td>
+            <td>通關方式</td>
+            <td>客戶電話</td>
+            <td>傳真</td>
+            <td>會員姓名</td>
+            <td>品號</td>
+            <td>品名</td>
+            <td>規格</td>
+            <td>數量</td>
+            <td>單價(統)</td>
+            <td>單身備註</td>
+            <td>類型</td>
+            <td>網路訂單編號</td>
+            <td>單頭備註</td>
+            <td>單身序號</td>
+            <td>預收待抵單別</td>
+            <td>預收待抵單號</td>
+            <td>單身金額</td>
+            <td>本幣稅額</td>
+            <td>金額</td>
+            <td>取貨方式</td>
+        </tr>
+        {% for data in datas %}
+        {% for order in data.orders %}
+        <tr>
+            <td>'0007</td>
+            <!--發票抬頭-->
+            <td>{{ data.orders.0.member__invoice_title}}</td>
+            <td></td>
+            <td></td>
+            <!--統一編號-->
+            <td>'{{ data.orders.0.member__invoice_id}}</td>
+            <td>5</td>
+            <!--課稅別,1為無統編、2是有統編-->
+            {% if  data.orders.0.member__invoice_id == None %}
+            <td>1</td>
+            {% elif  data.orders.0.member__invoice_id == '' %}
+            <td>1</td>
+            {% else %}
+            <td>2</td>
+            {% endif %}
+            <td></td>
+            <td></td>
+            <td>'0007</td>
+            <td></td>
+            <td>1</td>
+            <td></td>
+            <td></td>
+            <!--FB名-->
+            <td>{{ data.orders.0.member__name}}</td>
+            <!--erp_no-->
+            <td>'0{{ order.product__erp_no}}</td>
+            <td>{{ order.product__name }}</td>
+            <td></td>
+            <!--數量-->
+            <td>{{ order.confirm_amount }}</td>
+            <!--單價(統)-->
+            <td>{{ order.product__price }}</td>
+            <!--單身備註(收貨人)-->
+            <td>{{ data.orders.0.member__shipname}}</td>
+            <td>2</td>
+            <!--訂單編號-->
+            <td>{{ data.checkout.0.checkout_id}}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <!--            總價-->
+            <td>{{ order.order_total_price  }}</td>
+            <!--            取貨方式-->
+            <td>{{ data.checkout.0.ship_method }}</td>
+        </tr>
+        {% endfor %}
+        {% endfor %}
+    </table>
+    {% endif %}
+</div>
+
+{% endblock content %}
+
+{% block styles %}
+<style>
+    .tr-yellow {
+        background-color: yellow;
+    }
+
+    .tr-blue {
+        background-color: navy;
+        color: white;
+    }
+
+
+    table,
+    table tr th,
+    table tr td {
+        min-width: 100px;
+        text-align: center;
+    }
+
+    td {
+        padding: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+</script>
+{% endblock %}

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <!-- 入口 -->
+    {% if fbuid is None %}
+    <div class="announcement">
+        <h2> 2019-佩玄8月快閃團- 【匯款公告】-2019 /9/ 2 </h2>
+        <b>** 匯款時間： 2019/9/2(一) ~2019/9/4(三) 18:00止</b>
+        <br>
+        <h3>★ 本次-特別注意事項 ★</h3>
+
+        ① 因FB規則改變，本月團購單獨結團, 不併入原創潮系統查詢。
+        <br>
+        ② 本次不提供寄存服務。
+        <br>
+        ③  本次優惠滿 6瓶以上免運。
+        <br><br>
+
+        <h3>★ 團購付款步驟 : (先匯款、之後再填單 )</h3>
+        ~~ ① 確認訂單內容
+        <br>
+        ~~ ② 匯款（金額依選擇取貨方式之金額）
+        <br>
+        ~~ ③ 填寫表單資料（回到訂單頁面下方填寫）。填寫完畢-確認送出
+        <br>
+        以上步驟全部完成，才能核對帳款及安排後續出貨！
+        <br>
+
+        <h3>★ 出貨資訊</h3>
+        <h4>【宅配】</h4>
+        ~~ ① 「單買酒類」-運費-參照冷藏運費表。
+        <br>
+        ~~ ② 出貨時間：完成付款程序後，約7~10個工作天陸續開始，依 "付款順序" 分批出貨。
+        <br>
+        ~~ ③ 出貨通知：請參照FB社團的" 出貨名單公告"。
+
+        <h4>【自取】</h4>
+        ~~ ① 全部品項，開放台北、台中領取。
+        <br>
+        ~~ ② 自取時間：一定等FB社團公告名單後再前往，以免白跑一趟!!!領取時請出示相關証件以供核對!
+        <br>
+        ~~ ③ 自取地點：<br>
+        　　　台北～台北市內湖區瑞光路413號9樓之一 (創潮酒坊) ( 02 ) 8066-0808 ext.8302 林小姐。<br>
+        　　　台中～台中市西屯區市政路668號（近黎明路與市政路口） (創潮酒坊) ( 04 ) 3707-7098張小姐。<br>
+        <br>
+        ~~ ④ 開放時段：週一至週五 10:00~12:00 , 13: 30~18: 00 (遇國定及假日不開放)。
+        <br>
+        ~~ ⑤ 自取期限：通知後一個月內要前往領取~逾期將以運費到付方式宅配出貨給你。
+        <br>
+        ~~ ⑥ 委託代領：請務必先私訊告知小幫手<代領人姓名>，代領者於取貨請出示相關証件以供核對。
+
+    </div>
+    <h1>➡️ ➡️ ➡️ FB 連結：</h1>
+    <div id="fb-search">
+        <input id="input_fb_url" type="text" name="fb_url" size="50" value=""> <button id="click">Submit</button>
+    </div>
+
+    <br><br>
+    <text id="warning" class="warning"></text>
+    <div class="notes_fb_format">
+        註：您的 FB 個人連結可能是以下的形式之一：
+        <ul>
+            <li>https://www.facebook.com/JohnDoe</li>
+            <li>https://m.facebook.com/sally.struthers</li>
+            <li>https://www.facebook.com/profile.php?id=24353623</li>
+        </ul>
+    </div>
+
+    <!-- 沒有訂單 -->
+    {% elif orders is None %}
+
+    <h2>此用戶沒有近期訂單</h2>
+    <a href="/confirmedOrder">回查詢頁面</a>
+
+    <!-- 有訂單 -->
+    {% else %}
+    <div class="announcement">
+        <h2> 2019-佩玄8月快閃團- 【匯款公告】-2019 /9/ 2 </h2>
+        <b>** 匯款時間： 2019/9/2(一) ~2019/9/4(三) 18:00止</b>
+        <br>
+        <h3>★ 本次-特別注意事項 ★</h3>
+
+        ① 因FB規則改變，本月團購單獨結團, 不併入原創潮系統查詢。
+        <br>
+        ② 本次不提供寄存服務。
+        <br>
+        ③  本次優惠滿 6瓶以上免運。
+        <br><br>
+
+        <h3>★ 團購付款步驟 : (先匯款、之後再填單 )</h3>
+        ~~ ① 確認訂單內容
+        <br>
+        ~~ ② 匯款（金額依選擇取貨方式之金額）
+        <br>
+        ~~ ③ 填寫表單資料（回到訂單頁面下方填寫）。填寫完畢-確認送出
+        <br>
+        以上步驟全部完成，才能核對帳款及安排後續出貨！
+        <br>
+
+        <h3>★ 出貨資訊</h3>
+        <h4>【宅配】</h4>
+        ~~ ① 「單買酒類」-運費-參照冷藏運費表。
+        <br>
+        ~~ ② 出貨時間：完成付款程序後，約7~10個工作天陸續開始，依 "付款順序" 分批出貨。
+        <br>
+        ~~ ③ 出貨通知：請參照FB社團的" 出貨名單公告"。
+
+        <h4>【自取】</h4>
+        ~~ ① 全部品項，開放台北、台中領取。
+        <br>
+        ~~ ② 自取時間：一定等FB社團公告名單後再前往，以免白跑一趟!!!領取時請出示相關証件以供核對!
+        <br>
+        ~~ ③ 自取地點：<br>
+        　　　台北～台北市內湖區瑞光路413號9樓之一 (創潮酒坊) ( 02 ) 8066-0808 ext.8302 林小姐。<br>
+        　　　台中～台中市西屯區市政路668號（近黎明路與市政路口） (創潮酒坊) ( 04 ) 3707-7098張小姐。<br>
+        <br>
+        ~~ ④ 開放時段：週一至週五 10:00~12:00 , 13: 30~18: 00 (遇國定及假日不開放)。
+        <br>
+        ~~ ⑤ 自取期限：通知後一個月內要前往領取~逾期將以運費到付方式宅配出貨給你。
+        <br>
+        ~~ ⑥ 委託代領：請務必先私訊告知小幫手<代領人姓名>，代領者於取貨請出示相關証件以供核對。
+
+        <br><br>
+        ~任何問題需要幫忙嗎？請點擊下方-小幫手
+        <br>
+        有問題請聯絡你的小幫手：👉👉👉 <a href="{{ member.helper.user_profile_url }}" target="_blank">{{ member.helper }}</a>
+    </div>
+
+    <h3 id="userName" fbuid="{{ member.fbid }}">訂購人： {{member.name}}</h3>
+    <h3>訂單編號：{{ final.訂單編號 }}</h3>
+
+    <table id="table-items">
+        <tr>
+            <th>團購批號</th>
+            <th>商品編號</th>
+            <th>商品名稱</th>
+            <!-- <th>留言購買數</th> -->
+            <th>數量</th>
+            <th>商品單價</th>
+            <th>商品總價</th>
+            <th>備註</th>
+        </tr>
+
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.session }}</td>
+            <td>{{ order.商品編號 }}</td>
+            <td style="text-align: left">{{ order.商品名稱 }}</td>
+            <!-- <td>{{ order.留言購買數 }}</td> -->
+            <td>{{ order.扣除贈送量後計價數 }}</td>
+            <td>{{ order.商品單價 }}</td>
+            <td>{{ order.商品總價 }}</td>
+            <td>{{ order.備註 }}</td>
+        </tr>
+
+        {% endfor %}
+        <tr>
+            <!-- <td>團購批號</td>
+            <td>訂單編號</td> -->
+            <td colspan="3">小計</td>
+            <td colspan="4">{{ final.結算確認購買數量 }}</td>
+            <!-- <td>金額達標免運優惠</td>
+            <td>瓶數達標免運優惠</td>
+            <td>全團折扣</td> -->
+
+        </tr>
+        <tr>
+            <!-- <td>{{ final.session }}</td>
+            <td>{{ final.訂單編號 }}</td> -->
+            <!-- <td>{{ final.金額達標免運優惠 }}</td>
+            <td>{{ final.瓶數達標免運優惠 }}</td>
+            <td>{{ final.全團折扣優惠 }}</td> -->
+        </tr>
+        <!-- <tr>
+            <td colspan="5" style="text-align: left">折扣前價格</td>
+            <td colspan="3">{{ final.折扣前價格 }}</td>
+        </tr> -->
+        <tr>
+            <td colspan="3" style="text-align: left">自取付款金額</td>
+            <td colspan="4">{{ final.折扣後自取價 }}</td>
+        </tr>
+        <tr>
+            <td colspan="3" style="text-align: left">運費</td>
+            <td colspan="4">{{ final.運費 }}</td>
+        </tr>
+        <tr>
+            <td colspan="3" style="text-align: left">宅配付款金額</td>
+            <td colspan="4">{{ final.含運費總價 }}</td>
+        </tr>
+
+    </table>
+
+    <h2>用戶基本資料</h2>
+    <table id="member_info">
+
+        <tr>
+            <th colspan="2" style="text-align: center" class="user_info_title">匯款與取貨資訊填寫</th>
+        </tr>
+        <tr>
+            <th class="user_info_title">訂購人</th>
+            <td>
+                {{ member.name }}
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title">匯款資訊</th>
+            <td>
+                匯款銀行：{{ member.helper.bank_account_branch }} <br>
+                帳號：{{ member.helper.bank_account_no }} <br>
+                戶名： {{ member.helper.bank_account_title }}
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text> 匯款金額</th>
+            <td>
+                <input id="input_transfer_amount" type="number"
+                    value="{{ feeListInfo.transfer_amount|default_if_none:'' }}">
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>匯款帳戶末五碼<br>
+                (請填寫存褶或卡片背面後5碼/無褶存入填寫匯款人姓名)</th>
+            <td>
+                <input id="input_transfer_account" type="value"
+                    value="{{ feeListInfo.transfer_account|default_if_none:'' }}">
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>email(請留常用信箱)</th>
+            <td>
+                <input id="input_email" type="email" size="30" value="{{ member.email|default_if_none:'' }}"></td>
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>手機</th>
+            <td>
+                <input id="input_phone" type="value" size="30" value="{{ member.phone|default_if_none:'' }}"></td>
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>取貨方式</th>
+            <td>
+                <label for="self-take-tp"><input type="radio" name="deliver-way" id="self-take-tp"
+                        {% if feeListInfo.ship == "tp" %} checked {%endif%} value="tp">
+                    內湖自取（台北市內湖區瑞光路413號9樓之一）</label><br>
+                <label for="self-take-tc"><input type="radio" name="deliver-way" id="self-take-tc"
+                        {% if feeListInfo.ship == "tc" %} checked {%endif%} value="tc">
+                    台中自取（台中市西屯區市政路668號（近黎明路與市政路口））</label><br>
+                <label for="self-take-false"><input type="radio" name="deliver-way" id="self-take-false" value="ship"
+                        {% if feeListInfo.ship == "ship" %} checked {%endif%}>
+                    冷藏宅配(單購一般品項採常溫配送/或合併運送詳公告或參考冷藏宅配收費表)</label>
+            </td>
+        </tr>
+        <tr>
+            <th colspan="2" style="text-align: center" class="user_info_title"><text
+                    class="red-text">*</text>宅配資訊填寫(自取者也須填宅配地址)</th>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>縣市</th>
+            <td>
+                <input id="input_city" type="value" size="30" value="{{ member.city|default_if_none:'' }}">
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>地區(區鄉鎮市)</th>
+            <td>
+                <input id="input_county" type="value" size="30" value="{{ member.county|default_if_none:'' }}">
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>郵遞區號</th>
+            <td>
+                <input id="input_zipcode" type="value" size="30" value="{{ member.zipcode|default_if_none:'' }}">
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>地址</th>
+            <td>
+                <input id="input_address" type="text" size="50" value="{{ member.address|default_if_none:'' }}">
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>收件人(請填寫中文全名)</th>
+            <td>
+                <input id="input_name" type="text" size="30" value="{{ member.shipname|default_if_none:'' }}"></td>
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title"><text class="red-text">*</text>配送時段</th>
+            <td>
+                <label for="deliver-morning"><input type="radio" name="deliver-time" id="deliver-morning"
+                        {% if feeListInfo.deliver_time == "morning" %} checked {%endif%} value="morning">13時前</label><br>
+                <label for="deliver-noon"><input type="radio" name="deliver-time" id="deliver-noon"
+                        {% if feeListInfo.deliver_time == "noon" %} checked {%endif%} value="noon"> 14時-18時</label><br>
+                <label for="deliver-all"><input type="radio" name="deliver-time" id="deliver-all" value="all"
+                        {% if feeListInfo.deliver_time == "all" %} checked {%endif%}>不指定</label>
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title">指定配送日: <br>
+                (無法指定“週日”/ 指定日期必需晚於填單後10天)</th>
+            <td>
+                <input id="input_deliver_date" type="text" size="30"
+                    value="{{ feeListInfo.deliver_date|default_if_none:'' }}"></td>
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title">發票抬頭(需開立三聯式發票請填寫此欄/並務必填寫完整公司抬頭)</th>
+            <td>
+                <input id="input_invoice_title" type="text" size="30" required
+                    value="{{ member.invoice_title|default_if_none:'' }}"></td>
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title">統一編號(需開立三聯式發票請填寫此欄/請務必確認統編是否正確)</th>
+            <td>
+                <input id="input_invoice_id" type="text" size="30" value="{{ member.invoice_id|default_if_none:'' }}">
+            </td>
+            </td>
+        </tr>
+        <tr>
+            <th class="user_info_title">備註</th>
+            <td>
+                <input id="input_notes" type="text" value="{{ feeListInfo.notes|default_if_none:'' }}">
+            </td>
+        </tr>
+
+        <tr>
+            <th class="user_info_title">小幫手</th>
+            <td> 有問題請聯絡你的小幫手：👉👉👉 <a href="{{ member.helper.user_profile_url }}" target="_blank">{{ member.helper }}</a>
+            </td>
+        </tr>
+    </table>
+    <br>
+    註：標記 <text class="red-text">*</text> 為必填欄位，請在送出前確認填寫 🙏🙏🙏
+    <br><br>
+    <button onclick="submitChange()">送出匯款資訊</button>
+    {% load static %}
+    <h2>運費規則</h2>
+    <img id="ship_rule" src="https://temporary0.s3-ap-southeast-1.amazonaws.com/INNOPRO/ship_rule.png" alt="">
+    {% endif %}
+
+</body>
+
+</html>
+
+<style>
+    #ship_rule {
+        width: 80vw;
+        height: auto;
+    }
+
+    #fb-search>input,
+    button {
+        font-size: 20px;
+    }
+
+    .red-text {
+        color: red
+    }
+
+    #table-items tr td {
+        text-align: center;
+    }
+
+    .announcement {
+        padding: 20px;
+        background-color: antiquewhite;
+    }
+
+    table {
+        width: 100%;
+        /* border: solid black 1px; */
+        border-collapse: collapse;
+    }
+
+    th,
+    td,
+    tr {
+        border: solid black 1px;
+        padding: 5px;
+        /* font-size: 18px; */
+    }
+
+    td>input {
+        font-size: 16px;
+        width: 90%;
+        height: 25px;
+    }
+
+    .user_info_title {
+        text-align: left;
+        width: 200px;
+    }
+
+    #submitChange {
+        font-size: 20px;
+        border-radius: 5px;
+    }
+
+    #warning,
+    .warning {
+        font-size: 12px;
+        color: red;
+    }
+
+    .notes_fb_format {
+        font-size: 16px;
+    }
+
+    .notes_fb_format>ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+
+    .notes_fb_format>ul>li {
+        background-color: #F9F2F4;
+        color: #008000;
+        margin-top: 10px;
+        width: fit-content;
+    }
+</style>
+
+<script>
+    let inputFBUrl = function () {
+        let fb_url = document.querySelector('#input_fb_url').value
+        let data = {
+            'fb_url': fb_url
+        }
+
+        $.ajax({
+            //提交數據的類型 POST GET
+            type: "POST",
+            //提交的網址
+            url: "/fbUrlToId/",
+            //提交的數據
+            data: data,
+            //返回數據的格式
+            datatype: "json",//"xml", "html", "script", "json", "jsonp", "text".
+            //在請求之前調用的函數
+            // beforeSend: function () { $("#msg").html("logining"); },
+            //成功返回之後調用的函數             
+            success: function (data) {
+                console.log(data)
+                if (data.fbuid) {
+                    console.log(data.fbuid)
+                    $('#warning').text('')
+                    window.location = data['fbuid']
+                } else {
+                    console.log('not an user')
+                    $('#warning').text('此帳號沒有近期的訂購記錄')
+                }
+
+            },
+            //調用執行後調用的函數
+            // complete: function (XMLHttpRequest, textStatus) {
+            //     alert(XMLHttpRequest.responseText);
+            //     alert(textStatus);
+            //HideLoading();
+            // },
+            //調用出錯執行的函數
+            error: function (e) {
+                console.log(e)
+                //請求出錯處理
+            }
+        });
+
+
+    }
+
+    let click = document.querySelector('#click')
+    try {
+        click.addEventListener('click', inputFBUrl)
+    } catch (error) {
+        console.log(error)
+    }
+
+    let submitChange = function () {
+        let confirm = window.confirm("確定必填欄位都有填寫正確資訊？")
+        if (confirm) {
+            let email = $('#input_email').val() !== '' ? $('#input_email').val() : null
+            let phone = $('#input_phone').val() !== '' ? $('#input_phone').val() : null
+            let city = $('#input_city').val() !== '' ? $('#input_city').val() : null
+            let county = $('#input_county').val() !== '' ? $('#input_county').val() : null
+            let zipcode = $('#input_zipcode').val() !== '' ? $('#input_zipcode').val() : null
+            let address = $('#input_address').val() !== '' ? $('#input_address').val() : null
+            let name = $('#input_name').val() !== '' ? $('#input_name').val() : null
+            let invoice_id = $('#input_invoice_id').val() !== '' ? $('#input_invoice_id').val() : null
+            let invoice_title = $('#input_invoice_title').val() !== '' ? $('#input_invoice_title').val() : null
+            let ship_method = $("input[type='radio'][name='deliver-way']:checked").val();
+            let deliver_time = $("input[type='radio'][name='deliver-time']:checked").val() === undefined? 'all' :$("input[type='radio'][name='deliver-time']:checked").val();
+            let deliver_date = $('#input_deliver_date').val() !== '' ? $('#input_deliver_date').val() : null
+            let transfer_amount = $('#input_transfer_amount').val() !== '' ? $('#input_transfer_amount').val() : null
+            let transfer_account = $('#input_transfer_account').val() !== '' ? $('#input_transfer_account').val() : null
+            let notes = $('#input_notes').val() !== '' ? $('#input_notes').val() : null
+            let data = {
+                'user_fb_id': $('#userName')[0].getAttribute('fbuid'),
+
+                'email': email,
+                'phone': phone,
+                'city': city,
+                'county': county,
+                'address': address,
+                'zipcode': zipcode,
+                'name': name,
+                'invoice_id': invoice_id,
+                'invoice_title': invoice_title,
+                'ship_method': ship_method,
+                'deliver_time': deliver_time,
+                'deliver_date': deliver_date,
+                'transfer_amount': transfer_amount,
+                'transfer_account': transfer_account,
+                'notes': notes
+            }
+            console.log(data)
+            $.ajax(
+                {
+                    //提交數據的類型 POST GET
+                    type: "POST",
+                    //提交的網址
+                    url: "/submitTransferInfo/",
+                    //提交的數據
+                    data: data,
+                    //返回數據的格式
+                    datatype: "json",
+                    //成功返回之後調用的函數             
+                    success: function (data) {
+
+                        if (data.status === 'success') {
+                            console.log(data)
+                            window.alert('資料上傳成功')
+                            location.reload()
+                        } else {
+                            window.alert('系統錯誤，請稍後再試')
+                        }
+                    },
+                    //調用執行後調用的函數
+                    // complete: function (XMLHttpRequest, textStatus) {
+                    //     alert(XMLHttpRequest.responseText);
+                    //     alert(textStatus);
+                    //HideLoading();
+                    // },
+                    //調用出錯執行的函數
+                    error: function (e) {
+                        console.log(e)
+                        //請求出錯處理
+                    }
+                }
+            );
+
+        } else {
+        }
+    }
+
+
+
+</script>

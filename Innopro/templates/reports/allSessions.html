@@ -1,0 +1,8 @@
+<h3>{{ reportType }}清單</h3>
+<br>
+<div>
+    {% for session in allSessions %}
+    <a href="{{ request.path }}{{session.session_id}}"
+        class="list-group-item list-group-item-action">{{ session.session_id }} {{ reportType }}</a>
+    {% endfor %}
+</div>

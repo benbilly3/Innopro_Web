@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    {% if allSessions != None %}
+        {% include "reports/allSessions.html" %}
+    {% else %}
+        {% include "reports/sessionTitle.html" %}
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">編號</th>
+                    <th scope="col">品名</th>
+                    <th scope="col">售價</th>
+                    <th scope="col">數量</th>
+                    <th scope="col">品項收入</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <th scope="row">{{product.wine_id}}</th>
+                    <td>{{product.name}}</td>
+                    <td>{{product.price}}</td>
+                    <td>{{product.totalOrders}}</td>
+                    <td>{{product.income}}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="2">總收入（未含結算規則）</td>
+                    <td colspan="3" style="text-align: center">$NTD {{ total_income|default_if_none:"0" }}</td>
+                </tr>
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block styles %}
+<style>
+</style>
+{% endblock %}

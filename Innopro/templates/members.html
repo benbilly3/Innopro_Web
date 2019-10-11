@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    {% if month and year %}
+    <h2>{{ year }} 年 {{ month }} 月有訂購記錄的用戶</h2>
+    {% else %}
+    <h2>全用戶</h2>
+    {% endif %}
+    <table class="center">
+        <tr>
+            <th>用戶名稱</th>
+            <th>FB 連結</th>
+            <th>用戶八月訂單</th>
+        </tr>
+        {% for member in members %}
+        <tr>
+            <td><a href="{{ member.user_profile_url }}" target="_blank">{{ member.name }}</a></td>
+            <td>{{ member.user_profile_url }}</td>
+            <td><a href="/updateOrder/{{ member.fbid }}" target="_blank">連結</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if orders is not None %}
+    <h2>訂單資訊</h2>
+    <table class="center">
+        <tr>
+            <th>編號</th>
+            <th>酒名</th>
+            <th>數量</th>
+        </tr>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.product.wine_id }}</td>
+            <td>{{ order.product.name }}</td>
+            <td>{{ order.amount }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</body>
+
+<style>
+    body {
+        text-align: center;
+    }
+
+    .center {
+        text-align: center;
+        margin: auto;
+    }
+
+    table {
+        width: 80vw;
+        border-collapse: collapse;
+        border: 2px solid black;
+        border-collapse: collapse;
+    }
+
+    table,
+    table tr th,
+    table tr td {
+        border: 2px solid black;
+    }
+
+    td{
+        padding: 5px 10px;
+        min-width: 200px;
+    }
+</style>
+
+</html>

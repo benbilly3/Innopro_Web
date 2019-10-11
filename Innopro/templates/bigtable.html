@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+{% load custom_tags %}
+<br>
+<h2 class="center">結算後大表單</h2>
+<button class='btn btn-light dl-csv-btn' onclick="download()">Download-CSV</button>
+<br>
+<br>
+<table class="center">
+    <thead>
+        <tr>
+            <td>小幫手</td>
+            <td>訂單編號</td>
+            <td>用戶名稱</td>
+            <td>產品編號</td>
+            <td>No</td>
+            <td>名稱</td>
+            <td>單價</td>
+            <td>確認購買數</td>
+            <td>小計</td>
+        </tr>
+    </thead>
+    {% for data in datas %}
+    {% for order in data.orders %}
+    <tr>
+        <td>{{ order.member__helper__name}}</td>
+        <td>{{ data.checkout.0.checkout_id}}</td>
+        <td>{{ order.member__name}}</td>
+        <td>'0{{ order.product__erp_no}}</td>
+        <td>{{ order.product__wine_id }}</td>
+        <td>{{ order.product__name }}</td>
+        <td>{{ order.product__price }}</td>
+        <td>{{ order.confirm_amount }}</td>
+        <td>{{ order.order_total_price }}</td>
+    </tr>
+    {% endfor %}
+
+    <tr class="tr-yellow">
+        <td>{{ data.orders.0.member__helper__name}}</td>
+        <td>{{ data.checkout.0.checkout_id}}</td>
+        <td>{{ data.orders.0.member__name}}</td>
+        <td>總計</td>
+        <td></td>
+        <td>自取付款金額</td>
+        <td>共{{data.orders|length}}款</td>
+        <td>{{ data.checkout.0.total_amount}}</td>
+        <td>{{ data.checkout.0.price_after_disc}}</td>
+    </tr>
+    <tr class="tr-yellow">
+        <td>{{ data.orders.0.member__helper__name}}</td>
+        <td>{{ data.checkout.0.checkout_id}}</td>
+        <td>{{ data.orders.0.member__name}}</td>
+        <td>9900000001</td>
+        <td></td>
+        <td>運費</td>
+        <td>{{ data.checkout.0.ship_fee}}</td>
+        <td>1</td>
+        <td>{{ data.checkout.0.ship_fee}}</td>
+    </tr>
+    <tr class="tr-yellow">
+        <td>{{ data.orders.0.member__helper__name}}</td>
+        <td>{{ data.checkout.0.checkout_id}}</td>
+        <td>{{ data.orders.0.member__name}}</td>
+        <td>總計</td>
+        <td></td>
+        <td>宅配付款金額</td>
+        <td>共{{data.orders|length}}款</td>
+        <td>{{ data.checkout.0.total_amount}}</td>
+        <td>{{ data.checkout.0.total_price}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock content %}
+
+{% block styles %}
+<style>
+    .tr-yellow {
+        background-color: antiquewhite;
+    }
+
+    body {
+        text-align: center;
+    }
+
+    .center {
+        text-align: center;
+        margin: auto;
+    }
+
+    table {
+        border-collapse: collapse;
+        border: 3px solid black;
+        border-collapse: collapse;
+        width: 80%;
+    }
+
+    table,
+    table tr th,
+    table tr td {
+        border: 3px solid black;
+        /* table-layout: fixed; */
+    }
+
+    td {
+        padding: 5px 5px;
+        min-width: 120px;
+    }
+
+    .btn {
+        width: 120px;
+        height: 40px;
+        font-size: 14px;
+        position: relative;
+        left: 30vw;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const headRow = [...document.querySelectorAll('table thead tr td')]
+        .map(column => column.textContent.trim());
+
+    const rows = [...document.querySelectorAll('table tbody tr')]
+        .map(tr => [...tr.querySelectorAll('td')]
+            .map(td => td.textContent.trim())
+        );
+
+    const content = [headRow, ...rows]
+        .map(row => row.map(str => '"' + (str ? str.replace(/"/g, '""') : '') + '"'))
+        .map(row => row.join(','))
+        .join('\n');
+
+    const BOM = '\uFEFF'; // utf-8 byte-order-mark
+    const csvBlob = new Blob([BOM + content], { type: 'text/csv;charset=utf-8' });
+
+
+    function download() {
+        if (window.navigator.msSaveOrOpenBlob) {
+            // IE hack; see http://msdn.microsoft.com/en-us/library/ie/hh779016.aspx
+            navigator.msSaveBlob(csvBlob, 'exampleTable.csv');
+        } else {
+            const objectUrl = URL.createObjectURL(csvBlob);
+            const a = document.createElement('a');
+            a.setAttribute('href', objectUrl);
+            a.setAttribute('download', '結算後大表單.csv');
+
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    }
+
+</script>
+{% endblock %}

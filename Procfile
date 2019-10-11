@@ -1,0 +1,1 @@
+web: gunicorn --pythonpath Innopro Innopro.wsgi

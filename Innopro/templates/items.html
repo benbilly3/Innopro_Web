@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <h2 class="center">{{ year }} 年 {{ month }} 月品項</h2>
+    <br>
+    <br>
+    <table class="center">
+        <tr>
+            <th>Wine ID</th>
+            <th>Name</th>
+            <th>訂單詳情</th>
+            <th>FB link</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.wine_id }}</td>
+            <td>{{ item.name }}</td>
+            <td>
+                <a href="/orders/{{item.wine_id}}" target="_blank">
+                    訂單
+                </a>
+            </td>
+            <td>
+                <a href="{{ item.product_article_link }}" target="_blank">
+                    社團 Po 文連結
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+
+<style>
+    body {
+        text-align: center;
+    }
+
+    .center {
+        text-align: center;
+        margin: auto;
+    }
+
+    table {
+        border-collapse: collapse;
+        border: 2px solid black;
+        border-collapse: collapse;
+    }
+
+    table,
+    table tr th,
+    table tr td {
+        border: 2px solid black;
+    }
+
+    td {
+        padding: 5px 10px;
+        min-width: 200px;
+    }
+</style>
+
+</html>

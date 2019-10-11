@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex-center">
+    <div class="container">
+        <div>
+            <br>
+            <h2>編輯報名資料</h2>
+            <h6>學校名稱：{{ user.school_name }}</h6>
+            <h6>學校代碼：{{ user.school_id }}</h6>
+            <form class="form" action="{% url 'edit_info' %}" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <a href="/">
+                    <button type="button" class="btn btn-secondary btn-xs">取消</button>
+                </a>
+                <button type="submit" class="btn btn-primary btn-md">更新</button>
+                <input type="hidden" name="next" value="{{ next }}" />
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+
+{% block styles %}
+<style>
+    .wide {
+        width: 500px;
+        color: rebeccapurple;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,50 @@
+<h2 class="text-center">{{session.session_id}} {{ reportType }}</h2>
+<button class="download-csv btn btn-light" onclick="download()">Download CSV</button>
+<a href="/{{ reportUrl }}" class="back">回到{{ reportType }}清單</a>
+<br>
+<br>
+
+<style>
+    .download-csv,
+    .back {
+        display: inline-block;
+    }
+
+    .back {
+        float: right;
+    }
+</style>
+
+<script>
+    function download() {
+        const headRow = [...document.querySelectorAll('table thead tr th')]
+            .map(column => column.textContent.trim());
+
+        const rows = [...document.querySelectorAll('table tbody tr')]
+            .map(tr => [...tr.querySelectorAll('td')]
+                .map(td => td.textContent.trim())
+            );
+
+        const content = [headRow, ...rows]
+            .map(row => row.map(str => '"' + (str ? str.replace(/"/g, '""') : '') + '"'))
+            .map(row => row.join(','))
+            .join('\n');
+
+        const BOM = '\uFEFF'; // utf-8 byte-order-mark
+        const csvBlob = new Blob([BOM + content], { type: 'text/csv;charset=utf-8' });
+        if (window.navigator.msSaveOrOpenBlob) {
+            // IE hack; see http://msdn.microsoft.com/en-us/library/ie/hh779016.aspx
+            navigator.msSaveBlob(csvBlob, 'exampleTable.csv');
+        } else {
+            const objectUrl = URL.createObjectURL(csvBlob);
+            const a = document.createElement('a');
+            a.setAttribute('href', objectUrl);
+            a.setAttribute('download', '{{session.session_id}}_{{reportType}}.csv');
+
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    }
+
+</script>

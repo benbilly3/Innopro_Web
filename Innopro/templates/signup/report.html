@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex-center">
+    <div class="container">
+        {% if user.is_authenticated %}
+        <br>
+        <h4>您好，來自 {{ user.school_name }} 的使用者， {{ message }}</h4>
+
+        {% if isFirst == True %}
+        <div class="row" style="margin-top: 20px">
+            <div class="col-sm">
+                <a href="/report/add">
+                    <button class="btn btn-primary">
+                        新增投票結果
+                    </button>
+                </a>
+                <br>
+                <br>
+                <a href="/image">
+                    <button class="btn btn-primary">
+                        新增活動照片
+                    </button>
+                </a>
+            </div>
+        </div>
+
+        {% if photos is not None %}
+        <h5 style="margin-top: 50px">活動照片</h5>
+        <div class="row">
+            {% for photo in photos %}
+            <div>
+                <a href="{{ photo.photo.url }}" target="_blank">
+                    <img class="img-thumbnail img-fluid" src="{{ photo.photo.url }}" alt="" style="height: 200px">
+                </a>
+                <p style="text-align: center">{{ photo.name }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="/image">
+            <button type="button" class="btn btn-secondary btn-md">
+                編輯照片
+            </button>
+        </a>
+        {% endif %}
+
+        {% endif %}
+
+        {% if isFirst == None %}
+        <div class="row" style="margin-top: 20px">
+            <div class="col-sm">
+                <h5>投票基本資料</h5>
+                <p>學校：{{ user.school_name }}</p>
+                <p>投票開始時間：{{ voteData.vote_date }} {{ voteData.vote_time }}</p>
+                <p>投票結束時間：{{ voteData.vote_date_end }} {{ voteData.vote_time_end }}</p>
+                <p>投票方式：{{ voteData.vote_type }}</p>
+                <p>選舉權人總數：{{ voteData.total_votable }}</p>
+            </div>
+            <div class="col-sm">
+                <h5>議題一 投票結果</h5>
+                <p>同意票數：{{ voteData.issue1_agree }}</p>
+                <p>不同意票數：{{ voteData.issue1_disagree }}</p>
+                <p>有效票數：{{ voteData.issue1_valid }}</p>
+                <p>無效票數：{{ voteData.issue1_invalid }}</p>
+                <p>實際投票數：{{ voteData.issue1_actual }}</p>
+                <p>投票率：{{ voteData.issue1_percantage }} ％</p>
+            </div>
+
+        </div>
+        <div class="row" style="margin-top: 30px">
+            <div class="col-sm" style="max-width: 500px">
+                備註：<br> {{voteData.notes}}
+            </div>
+        </div>
+        <br>
+        <a href="/report/edit">
+            <button type="button" class="btn btn-secondary btn-md" role="button">編輯投票資料</button>
+        </a>
+        <hr>
+        <h5 style="margin-top: 50px">活動照片</h5>
+        <div class="row">
+            {% for photo in photos %}
+            <div class="photo">
+                <a href="{{ photo.photo.url }}" target="_blank">
+                    <img class="img-thumbnail img-fluid" src="{{ photo.photo.url }}" alt="" style="height: 200px">
+                </a>
+                <h6 style="text-align: center">{{ photo.name }}</h6>
+                <br>
+                <h6>圖片說明：</h6>
+                <p>{{ photo.photo_comment }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <a href="/image">
+            <button type="button" class="btn btn-secondary btn-md">
+                編輯照片
+            </button>
+        </a>
+
+        {% endif %}
+
+        {% else %}
+        <p>您還沒有登入
+            <a href="{% url 'login' %}?next={{ request.path }}">
+                <button class="btn btn-default">
+                    登入
+                </button>
+            </a>
+            或者
+            <a href="{% url 'signup:register' %}?next={{ request.path }}"></a>
+            <button class="btn btn-default">
+                註冊
+            </button>
+            </a>
+        </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block styles %}
+<style>
+    .photo {
+        margin: 20px;
+    }
+</style>
+{% endblock %}

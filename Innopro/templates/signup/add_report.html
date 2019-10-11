@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex-center">
+    <div class="container">
+        <div>
+            <br>
+            <h2>新增回報資料</h2>
+
+            <form class="form" action="{% url 'add_report' %}" autocomplete="off" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <!-- {{ form.vote_date }} -->
+                <a href="/report"><button type="button" class="btn btn-secondary btn-xs">取消</button></a>
+                <button type="submit" class="btn btn-primary btn-md">新增</button>
+                <!-- <input type="hidden" name="next" value="{{ next }}" /> -->
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block styles %}
+<style>
+    p {
+        position: relative;
+    }
+
+    .datepicker td,
+    .datepicker th {
+        width: 50px
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+        // https://xdsoft.net/jqplugins/datetimepicker/
+        $.datetimepicker.setLocale('zh-TW');
+        $('#vote_date_picker').datetimepicker({
+            // minDate:0,
+            datepicker: true,
+            timepicker: false,
+            format: 'Y-m-d'
+        });
+    
+        $('#vote_time_picker').datetimepicker({
+            defaultTime: '12:00',
+            datepicker: false,
+            format: 'H:i',
+            step: 30,
+            minTime: '08:00',
+            maxTime: '21:00'
+        });
+    
+        $('#vote_date_end_picker').datetimepicker({
+            // minDate:0,
+            datepicker: true,
+            timepicker: false,
+            format: 'Y-m-d'
+        });
+    
+        $('#vote_time_end_picker').datetimepicker({
+            defaultTime: '12:00',
+            datepicker: false,
+            format: 'H:i',
+            step: 30,
+            minTime: '08:00',
+            maxTime: '21:00'
+        });
+    
+        var inputs = $('input')
+        var percentage_field = $('.percentage')
+    
+        var updatePercentage = function () {
+            var total_votable_nb = parseInt(inputs[3].value, 10)
+            var valid_nb = parseInt(inputs[6].value, 10)
+            var invalid_nb = parseInt(inputs[7].value, 10)
+            let percentage = (valid_nb + invalid_nb) * 100 / total_votable_nb
+            var size = Math.pow(10, 1);
+            percentage = Math.round(percentage * size) / size;
+            percentage_field.val(percentage)
+        }
+    
+        updatePercentage()
+        $.each(inputs, function () {
+            inputs.on("change", function () {
+                updatePercentage()
+            })
+        })
+    </script>
+{% endblock %}
